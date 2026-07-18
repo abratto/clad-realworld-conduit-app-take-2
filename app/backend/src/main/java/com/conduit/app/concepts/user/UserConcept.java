@@ -10,6 +10,8 @@ import jakarta.inject.Singleton;
 import org.apache.jena.query.ParameterizedSparqlString;
 import org.apache.jena.rdf.model.ResourceFactory;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -19,7 +21,7 @@ import java.util.UUID;
  *
  * <p>State lives in the named graph {@code concept:user}. Two actions:
  * <ul>
- *   <li>{@code register} — adds a (userId, username) record.</li>
+ *   <li>{@code register} — creates a user with username, email, hashed password.</li>
  *   <li>{@code lookupByUsername} — emits {@code outcome=FOUND|UNKNOWN}.</li>
  * </ul>
  */
@@ -57,7 +59,7 @@ public final class UserConcept extends ConceptAgent {
         }
     }
 
-    /** Test/seed helper to pre-populate the user graph. */
+    /** Test/seed helper to pre-populate the user graph with a username. */
     public void seedUser(String userId, String username) {
         var pss = new ParameterizedSparqlString();
         pss.setNsPrefix("u", PROFILE_NS);
@@ -70,15 +72,32 @@ public final class UserConcept extends ConceptAgent {
 
     private void doRegister(ActionRecord invocation) {
         String username = invocation.binding("username");
+        String email = invocation.binding("email");
+        String password = invocation.binding("password");
+
         if (username == null) { writeError(invocation, "missing username"); return; }
+        if (email == null) { writeError(invocation, "missing email"); return; }
+        if (password == null) { writeError(invocation, "missing password"); return; }
+
         if (existsByUsername(username)) {
             writeRefusal(invocation, "username already taken: " + username);
             return;
         }
+        if (existsByEmail(email)) {
+            writeRefusal(invocation, "email already taken: " + email);
+            return;
+        }
+
         String userId = UUID.randomUUID().toString();
+        String passwordHash = sha256Hex(password);
         seedUser(userId, username);
+        storeEmail(userId, email);
+        storePasswordHash(userId, passwordHash);
+        storeBio(userId, null);
+        storeImage(userId, null);
+
         writeCompletion(invocation, Map.of(
-                "outcome", ResourceFactory.createStringLiteral("REGISTERED"),
+                "outcome", ResourceFactory.createStringLiteral("Registered"),
                 "userId", ResourceFactory.createStringLiteral(userId),
                 "username", ResourceFactory.createStringLiteral(username)));
     }
@@ -97,12 +116,63 @@ public final class UserConcept extends ConceptAgent {
         }
     }
 
+    private void storeEmail(String userId, String email) {
+        var pss = new ParameterizedSparqlString();
+        pss.setNsPrefix("u", PROFILE_NS);
+        pss.setCommandText("INSERT DATA { GRAPH ?g { ?user u:email ?email } }");
+        pss.setIri("g", GRAPH);
+        pss.setIri("user", PROFILE_NS + "user/" + userId);
+        pss.setLiteral("email", email);
+        actionLog.update(pss.toString());
+    }
+
+    private void storePasswordHash(String userId, String hash) {
+        var pss = new ParameterizedSparqlString();
+        pss.setNsPrefix("u", PROFILE_NS);
+        pss.setCommandText("INSERT DATA { GRAPH ?g { ?user u:passwordHash ?hash } }");
+        pss.setIri("g", GRAPH);
+        pss.setIri("user", PROFILE_NS + "user/" + userId);
+        pss.setLiteral("hash", hash);
+        actionLog.update(pss.toString());
+    }
+
+    private void storeBio(String userId, String bio) {
+        if (bio == null) return;
+        var pss = new ParameterizedSparqlString();
+        pss.setNsPrefix("u", PROFILE_NS);
+        pss.setCommandText("INSERT DATA { GRAPH ?g { ?user u:bio ?bio } }");
+        pss.setIri("g", GRAPH);
+        pss.setIri("user", PROFILE_NS + "user/" + userId);
+        pss.setLiteral("bio", bio);
+        actionLog.update(pss.toString());
+    }
+
+    private void storeImage(String userId, String image) {
+        if (image == null) return;
+        var pss = new ParameterizedSparqlString();
+        pss.setNsPrefix("u", PROFILE_NS);
+        pss.setCommandText("INSERT DATA { GRAPH ?g { ?user u:image ?image } }");
+        pss.setIri("g", GRAPH);
+        pss.setIri("user", PROFILE_NS + "user/" + userId);
+        pss.setLiteral("image", image);
+        actionLog.update(pss.toString());
+    }
+
     private boolean existsByUsername(String username) {
         var pss = new ParameterizedSparqlString();
         pss.setNsPrefix("u", PROFILE_NS);
         pss.setCommandText("ASK { GRAPH ?g { ?user u:username ?username } }");
         pss.setIri("g", GRAPH);
         pss.setLiteral("username", username);
+        return actionLog.ask(pss.toString());
+    }
+
+    private boolean existsByEmail(String email) {
+        var pss = new ParameterizedSparqlString();
+        pss.setNsPrefix("u", PROFILE_NS);
+        pss.setCommandText("ASK { GRAPH ?g { ?user u:email ?email } }");
+        pss.setIri("g", GRAPH);
+        pss.setLiteral("email", email);
         return actionLog.ask(pss.toString());
     }
 
@@ -116,5 +186,17 @@ public final class UserConcept extends ConceptAgent {
         if (rows.isEmpty()) return null;
         String iri = rows.get(0).get("user");
         return iri == null ? null : iri.substring(PROFILE_NS.length() + "user/".length());
+    }
+
+    private static String sha256Hex(String input) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            byte[] digest = md.digest(input.getBytes());
+            StringBuilder sb = new StringBuilder();
+            for (byte b : digest) sb.append(String.format("%02x", b));
+            return sb.toString();
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException("SHA-256 not available", e);
+        }
     }
 }

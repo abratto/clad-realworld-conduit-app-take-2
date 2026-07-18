@@ -70,14 +70,13 @@ class SessionGrantTest extends ConceptTestBase {
     class WhenGrantingSession {
 
         @Test
-        @DisplayName("shouldMintSessionTokenAndReturnUserId")
         void shouldMintSessionTokenAndReturnUserId() {
             initConcept();
             writePendingInvocation("user-0001");
 
             concept.pollAll();
 
-            assertEquals("GRANTED", readOutcome());
+            assertEquals("Granted", readOutcome());
             assertNotNull(readField("sessionToken"), "sessionToken must not be null");
             assertFalse(readField("sessionToken").isEmpty(), "sessionToken must not be empty");
             assertNotNull(readField("userId"));
