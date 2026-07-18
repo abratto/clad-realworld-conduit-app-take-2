@@ -12,9 +12,9 @@
 ## Phases
 
 | # | Phase | Feature(s) | Status | Notes |
-|---|---|---|---|---|
+|---|---|---|---|---|---|
 | 1 | Seed methodology | `UC-00-login` | done | Worked example, end-to-end through Stage 04. |
-| 2 | First real feature | `UC-01-<slug>` | next | Replace this row when you start your first feature. |
+| 2 | Conduit backend — core | 13 UCs (UC-01–UC-13) | doing | Building full Conduit/RealWorld backend |
 
 ## Backlog
 
@@ -22,13 +22,13 @@
 > by moving it into the phases table and setting status to `doing`
 > (and demoting the previous `doing` row to `done`).
 
-- _(none yet — add `UC-XX-<slug> — <one-line summary>` lines as ideas land)_
+- _full list is the 13 in-scope goals from Stage 00, sequenced in order below_
 
 ## Resume point
 
 > Updated at the end of every working session.
 
-- **Last gate passed:** `UC-00-login` Stage 05 (worked example shipped)
-- **Next stage:** start `UC-01-<slug>` Stage 00 (actor/goal)
+- **Last gate passed:** Stage 00 (system-level actors/goals/port-spec) — 2026-07-18
+- **Current feature:** UC-01-register — next
 - **Blockers:** none
-- **Last updated:** 2026-07-03 — methodology maintenance: added canonical `When<Trigger>Then<Target>` sync naming and extended `verify_implementation_parity.py` to validate sync spec/header/class/runtime names mechanically. UC-00 sync specs and Java sync classes migrated to the rule-shaped names.
+- **Last updated:** 2026-07-18 — Stage 00 approved; 13 in-scope goals identified
