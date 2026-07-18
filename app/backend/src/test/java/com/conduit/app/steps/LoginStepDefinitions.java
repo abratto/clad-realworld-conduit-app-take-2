@@ -46,8 +46,8 @@ public class LoginStepDefinitions {
     private static EmbeddedServer server;
     private static HttpClient client;
 
-    private HttpResponse<String> response;
-    private HttpClientResponseException failure;
+    static HttpResponse<String> response;
+    static HttpClientResponseException failure;
 
     // -----------------------------------------------------------------------
     // Helpers — server lifecycle (lazy init, no Cucumber @BeforeAll)
