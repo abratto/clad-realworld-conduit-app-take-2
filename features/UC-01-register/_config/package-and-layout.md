@@ -5,16 +5,16 @@ reference implementation when they are not correct for this project.
 
 ## Required
 
-- **APP_PACKAGE_ROOT:** `TBD`  
-  Example: `org.acme.billing`
-- **APP_SOURCE_ROOT:** `TBD`  
+- **APP_PACKAGE_ROOT:** `com.conduit.app`
+  Example: `com.conduit.app`
+- **APP_SOURCE_ROOT:** `app/backend/src/main/java`
   Example: `src/main/java`
-- **APP_TEST_SOURCE_ROOT:** `TBD`
+- **APP_TEST_SOURCE_ROOT:** `app/backend/src/test/java`
   Example: `src/test/java`
 
 ## Optional
 
-- **REFERENCE_PROFILE:** `TBD`  
+- **REFERENCE_PROFILE:** `reference-impl/java-micronaut-jena`
   Example: `reference-impl/java-micronaut-jena`
 
 ## Rules

@@ -45,7 +45,7 @@ public final class WhenSessionGrantGrantedThenWebRespondForLogin extends SyncAge
             ?_when_1 :concept <%s> ;
                      :name    "grant" ;
                      :sessionToken ?_sessionToken .
-            << ?_when_1 :outcome "GRANTED" >> :flow ?_flow .
+            << ?_when_1 :outcome "Granted" >> :flow ?_flow .
             ?_web_req :concept <%s> ;
                       :name    "request" ;
                       :flow    ?_flow ;

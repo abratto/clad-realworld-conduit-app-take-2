@@ -75,7 +75,7 @@ public final class SessionConcept extends ConceptAgent {
         actionLog.update(pss.toString());
 
         writeCompletion(invocation, Map.of(
-                "outcome", ResourceFactory.createStringLiteral("GRANTED"),
+                "outcome", ResourceFactory.createStringLiteral("Granted"),
                 "sessionToken", ResourceFactory.createStringLiteral(sessionToken),
                 "userId", ResourceFactory.createStringLiteral(userId)));
     }

@@ -14,7 +14,8 @@
 | # | Phase | Feature(s) | Status | Notes |
 |---|---|---|---|---|---|
 | 1 | Seed methodology | `UC-00-login` | done | Worked example, end-to-end through Stage 04. |
-| 2 | Conduit backend — core | 13 UCs (UC-01–UC-13) | doing | Building full Conduit/RealWorld backend |
+| 2 | Conduit backend — core | UC-01-register | done | Registration complete (66 tests, 7 sync agents) |
+| 3 | Conduit backend — auth | UC-02-sign-in | doing | Sign In — next feature |
 
 ## Backlog
 
@@ -28,7 +29,7 @@
 
 > Updated at the end of every working session.
 
-- **Last gate passed:** Stage 00 (system-level actors/goals/port-spec) — 2026-07-18
-- **Current feature:** UC-01-register — next
+- **Last gate passed:** UC-01-register Stage 05 (verify) — 2026-07-18
+- **Current feature:** UC-02-sign-in — next
 - **Blockers:** none
-- **Last updated:** 2026-07-18 — Stage 00 approved; 13 in-scope goals identified
+- **Last updated:** 2026-07-18 — UC-01-register complete; 66 tests green

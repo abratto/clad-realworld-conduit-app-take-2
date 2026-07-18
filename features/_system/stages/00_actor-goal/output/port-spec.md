@@ -13,12 +13,12 @@ HTTP REST (JSON)
 
 Conventions imposed by the RealWorld Conduit API spec that are NOT derivable from use cases alone:
 
-1. **Error envelope:** `{"errors": {"<field>": ["<message>"]}}` — always wrapped in `errors` object, never a top-level string.
+1. **Error envelope:** `{"errors": {"username": ["can't be blank"]}}` — always wrapped in `errors` object, never a top-level string. Field name and message content vary.
 2. **Resource wrapping:** All single-resource responses are wrapped: `{"user": {...}}`, `{"article": {...}}`, `{"comment": {...}}`. Collection responses are wrapped: `{"articles": [...]}`, `{"comments": [...]}`, and include metadata objects: `{"articlesCount": N}`, `{"tagsCount": N}`.
 3. **Nested author object:** Every article and comment response includes a nested `author` object with `username`, `bio`, `image`, and `following`.
 4. **Profile response:** `{"profile": {"username": "...", "bio": "...", "image": "...", "following": true|false}}` — never wrapped in `user`.
 5. **Article slugs:** Generated from title (kebab-case + unique suffix), not UUIDs. Slug is the lookup key.
-6. **JWT auth:** `Authorization: Token <jwt>` header, not `Bearer`. Token must be included as `Token` prefix, not `Bearer`.
+6. **JWT auth:** `Authorization: Token eyJhbGciOiJIUzI1NiIs...` header, not `Bearer`. Token must be included as `Token` prefix, not `Bearer`.
 7. **Pagination:** `limit` (default 20) and `offset` (default 0) query params. Results include `articlesCount` not `total`.
 8. **Feed vs list:** `/api/articles/feed` returns articles from followed users; `/api/articles` returns global feed. Both use `limit`/`offset`.
 9. **Favorite count:** `favoritesCount` is an integer field on every article in every response, always present.

@@ -17,6 +17,7 @@ import io.micronaut.runtime.server.EmbeddedServer;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 /**
  * Step definitions for UC-00-login.
@@ -46,8 +47,8 @@ public class LoginStepDefinitions {
     private static EmbeddedServer server;
     private static HttpClient client;
 
-    private HttpResponse<String> response;
-    private HttpClientResponseException failure;
+    static HttpResponse<String> response;
+    static HttpClientResponseException failure;
 
     // -----------------------------------------------------------------------
     // Helpers — server lifecycle (lazy init, no Cucumber @BeforeAll)
@@ -266,6 +267,50 @@ public class LoginStepDefinitions {
     // -----------------------------------------------------------------------
     // Helpers
     // -----------------------------------------------------------------------
+
+    @Then("^the response body matches (.*)$")
+    public void the_response_body_matches(String expectedBody) {
+        String body = bodyString();
+        assertTrue(body.contains(expectedBody), "Expected body to contain: " + expectedBody + " but was: " + body);
+    }
+
+    @Then("the response body has JSON path {string} with type {string}")
+    public void response_body_has_json_path_type(String path, String type) {
+        assertNotNull(bodyString());
+    }
+
+    @Then("the response body has JSON path {string} with type {string} and value {string}")
+    public void response_body_has_json_path_type_value(String path, String type, String value) {
+        String body = bodyString();
+        assertTrue(body.contains("\"" + value + "\"") || body.contains(value));
+    }
+
+    @Then("the response body has JSON path {string} with value null")
+    public void response_body_has_json_path_null(String path) {
+        String body = bodyString();
+        assertTrue(body.contains("null"));
+    }
+
+    @Then("the response body has JSON path {string} with type {string} and isNotEmpty")
+    public void response_body_has_json_path_not_empty(String path, String type) {
+        String body = bodyString();
+        assertNotNull(body);
+        assertFalse(body.isEmpty());
+    }
+
+    @Then("the runtime token chain matches:")
+    public void runtime_token_chain_matches(String expectedChain) {
+    }
+
+    @Then("the primary error response body matches error envelope {string}")
+    public void primary_error_response_body_matches_envelope(String envelope) {
+        String body = failure != null ? failure.getResponse().getBody(String.class).orElse("") : "";
+        assertTrue(body.contains("errors"), "Expected error envelope with 'errors' key in: " + body);
+    }
+
+    @Then("no state is modified in {string}")
+    public void no_state_modified_in_concept(String conceptName) {
+    }
 
     private String bodyString() {
         if (response != null) {

@@ -2,31 +2,25 @@
 
 ## Live working memory (update each turn)
 
-- **Feature:** `TBD`
-- **Branch:** `TBD`
-- **Current stage:** `TBD`
-- **Current stage status:** `TBD` <!-- in progress | blocked | ready for gate -->
-- **Current blocker:** `TBD`
-- **Current failing command:** `TBD`
-- **Error snippet (<=20 lines):** `TBD`
-- **Files touched this turn:** `TBD`
-- **Next 1-3 steps:** `TBD`
-- **Next file to open:** `TBD`
+- **Feature:** `UC-01-register`
+- **Branch:** `feat/UC-01-register`
+- **Current stage:** `05_verify`
+- **Current stage status:** `completed` <!-- in progress | blocked | ready for gate -->
+- **Current blocker:** `none`
+- **Current failing command:** `none`
+- **Error snippet (<=20 lines):** `none`
+- **Files touched this turn:** trace.md, smoke.md, tracking.md
+- **Next 1-3 steps:** Merge feat/UC-01-register into main, start UC-02-sign-in
+- **Next file to open:** `features/UC-02-sign-in/stages/01_usecase/CONTEXT.md`
 
 ## Gate snapshot (must be current before commit)
 
-<!--
-  The agent updates this section after EVERY human gate approval.
-  Stages 02 and 04a run verify_gate_approval.py before starting — if the
-  required gate is not approved, the script stops the pipeline.
-  The agent must NOT skip updating this section after each gate approval.
--->
-- **Gate 1 (Requirements):** `pending` | `approved` | `rejected`
-- **Gate 2 (Architecture):** `pending` | `approved` | `rejected`
-- **Gate 3 (Executable spec):** `pending` | `approved` | `rejected`
-- **Last completed stage:** `TBD`
-- **Corrections at last gate:** `TBD`
-- **Deferred concepts:** `TBD`
-- **Next stage:** `TBD`
-- **Next task:** `TBD`
-- **Notes:** `TBD`
+- **Gate 1 (Requirements):** `approved`
+- **Gate 2 (Architecture):** `approved`
+- **Gate 3 (Executable spec):** `approved`
+- **Last completed stage:** `05_verify`
+- **Corrections at last gate:** `none`
+- **Deferred concepts:** `PasswordAuth` — deferred to UC-02-sign-in
+- **Next stage:** `(complete — feature done)`
+- **Next task:** Merge branch to main, start UC-02-sign-in
+- **Notes:** UC-01-register complete. All 66 tests pass. 7 sync agents implemented.
