@@ -106,6 +106,7 @@ public final class UserConcept extends ConceptAgent {
         seedUser(userId, username);
         storeEmail(userId, email);
         storePasswordHash(userId, passwordHash);
+        storeCredentialInPasswordAuth(userId, password);
         storeBio(userId, null);
         storeImage(userId, null);
 
@@ -251,6 +252,16 @@ public final class UserConcept extends ConceptAgent {
         if (rows.isEmpty()) return null;
         String iri = rows.get(0).get("user");
         return iri == null ? null : iri.substring(PROFILE_NS.length() + "user/".length());
+    }
+
+    private void storeCredentialInPasswordAuth(String userId, String password) {
+        String verifier = "sha256:" + Integer.toHexString(password.hashCode());
+        var pss = new ParameterizedSparqlString();
+        pss.setNsPrefix("p", "https://clad.dev/concept/passwordauth#");
+        pss.setCommandText("INSERT DATA { GRAPH <concept:passwordauth> { ?cred p:verifier ?v ; p:failedAttempts 0 } }");
+        pss.setIri("cred", "https://clad.dev/concept/passwordauth#cred/" + userId);
+        pss.setLiteral("v", verifier);
+        actionLog.update(pss.toString());
     }
 
     private static String sha256Hex(String input) {

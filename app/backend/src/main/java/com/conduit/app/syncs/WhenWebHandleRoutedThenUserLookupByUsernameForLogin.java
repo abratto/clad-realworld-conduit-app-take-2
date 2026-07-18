@@ -9,22 +9,17 @@ import com.conduit.app.engine.SyncTrigger;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 
-/**
- * Sync: WhenWebHandleRoutedThenUserLookupByUsernameForLogin
- *
- * <p>When: {@code Web/request[route=login]}
- * <p>Then: {@code User/lookupByUsername { username }}
- */
 @SyncMetadata(
         flow = "Login",
         step = 1,
         triggeredBy = "Web/request[route=login]",
-        fires = "User/lookupByUsername",
+        fires = "User/lookupByEmail",
         where = "route=login")
 @Singleton
 public final class WhenWebHandleRoutedThenUserLookupByUsernameForLogin extends SyncAgent {
 
     private static final String WEB_IRI = FlowManager.WEB_CONCEPT_IRI;
+    private static final String USER_IRI = UserConcept.IRI;
     private static final String LOGIN_ROUTE = "login";
 
     @Inject
@@ -45,8 +40,9 @@ public final class WhenWebHandleRoutedThenUserLookupByUsernameForLogin extends S
                      :name    "request" ;
                      :input   ?_web_inp ;
                      :flow    ?_flow .
-            ?_web_inp :route    ?_route ;
-                      :username ?_username .
+            ?_web_inp :route  ?_route ;
+                      :email  ?_email .
+            FILTER (STR(?email) != "")
             """.formatted(WEB_IRI);
     }
 
@@ -54,9 +50,9 @@ public final class WhenWebHandleRoutedThenUserLookupByUsernameForLogin extends S
     protected String thenBindings() {
         return """
             ?_then_1 :concept <%s> ;
-                     :name    "lookupByUsername" ;
-                     :input   [ :username ?_username ] .
-            """.formatted(UserConcept.IRI);
+                     :name    "lookupByEmail" ;
+                     :input   [ :email ?_email ] .
+            """.formatted(USER_IRI);
     }
 
     @Override
