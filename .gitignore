@@ -1,0 +1,21 @@
+# Build / IDE artefacts
+target/
+.idea/
+*.iml
+.vscode/
+.DS_Store
+
+# Maven wrapper noise (use system mvn)
+.mvn/
+mvnw
+mvnw.cmd
+
+# Local scratch / out-of-tree references
+references/
+
+# Local agent config (per-developer, not committed)
+# Copy .cline-clad-config.example to .cline-clad-config and fill in your values.
+.cline-clad-config
+
+# Legacy Roo local config
+.roo-clad-config
