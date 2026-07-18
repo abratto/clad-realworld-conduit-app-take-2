@@ -14,8 +14,9 @@
 | # | Phase | Feature(s) | Status | Notes |
 |---|---|---|---|---|---|
 | 1 | Seed methodology | `UC-00-login` | done | Worked example, end-to-end through Stage 04. |
-| 2 | Conduit backend — core | UC-01-register | done | Registration complete (66 tests, 7 sync agents) |
-| 3 | Conduit backend — auth | UC-02-sign-in | doing | Sign In — next feature |
+| 2 | Conduit backend — core | UC-01-register | done | Registration complete |
+| 3 | Conduit backend — auth | UC-02-sign-in | done | Email-based sign-in complete |
+| 4 | Conduit backend — profile | UC-03-manage-profile | next | View & update profile |
 
 ## Backlog
 

@@ -49,6 +49,8 @@ public final class UserConcept extends ConceptAgent {
         pollAndProcess("register");
         pollAndProcess("lookupByEmail");
         pollAndProcess("lookupByUsername");
+        pollAndProcess("getProfile");
+        pollAndProcess("updateProfile");
     }
 
     @Override
@@ -57,6 +59,8 @@ public final class UserConcept extends ConceptAgent {
             case "register" -> doRegister(invocation);
             case "lookupByEmail" -> doLookupByEmail(invocation);
             case "lookupByUsername" -> doLookup(invocation);
+            case "getProfile" -> doGetProfile(invocation);
+            case "updateProfile" -> doUpdateProfile(invocation);
             default -> writeError(invocation, "unknown action: " + invocation.actionName());
         }
     }
@@ -148,6 +152,70 @@ public final class UserConcept extends ConceptAgent {
                     "userId", ResourceFactory.createStringLiteral(userId),
                     "username", ResourceFactory.createStringLiteral(username)));
         }
+    }
+
+    private void doGetProfile(ActionRecord invocation) {
+        String userId = invocation.binding("userId");
+        if (userId == null) { writeError(invocation, "missing userId"); return; }
+        String username = findUsernameByUserId(userId);
+        if (username == null) { writeRefusal(invocation, "user not found: " + userId); return; }
+        String email = findFieldByUserId(userId, "email");
+        String bio = findFieldByUserId(userId, "bio");
+        String image = findFieldByUserId(userId, "image");
+        writeCompletion(invocation, Map.of(
+                "outcome", ResourceFactory.createStringLiteral("FOUND"),
+                "userId", ResourceFactory.createStringLiteral(userId),
+                "username", ResourceFactory.createStringLiteral(username),
+                "email", ResourceFactory.createStringLiteral(email != null ? email : ""),
+                "bio", ResourceFactory.createStringLiteral(bio != null ? bio : ""),
+                "image", ResourceFactory.createStringLiteral(image != null ? image : "")));
+    }
+
+    private void doUpdateProfile(ActionRecord invocation) {
+        String userId = invocation.binding("userId");
+        if (userId == null) { writeError(invocation, "missing userId"); return; }
+        String username = invocation.binding("username");
+        String email = invocation.binding("email");
+        String bio = invocation.binding("bio");
+        String image = invocation.binding("image");
+
+        if (username != null && !username.isBlank()) {
+            if (existsByUsername(username)) {
+                String current = findUsernameByUserId(userId);
+                if (!username.equals(current)) {
+                    writeRefusal(invocation, "username already taken: " + username);
+                    return;
+                }
+            }
+            updateField(userId, "username", username);
+        }
+        if (email != null && !email.isBlank()) {
+            if (existsByEmail(email)) {
+                String current = findFieldByUserId(userId, "email");
+                if (!email.equals(current)) {
+                    writeRefusal(invocation, "email already taken: " + email);
+                    return;
+                }
+            }
+            updateField(userId, "email", email);
+        }
+        if (bio != null) updateField(userId, "bio", bio.isEmpty() ? "" : bio);
+        if (image != null) updateField(userId, "image", image.isEmpty() ? "" : image);
+
+        writeCompletion(invocation, Map.of(
+                "outcome", ResourceFactory.createStringLiteral("Updated"),
+                "userId", ResourceFactory.createStringLiteral(userId)));
+    }
+
+    private void updateField(String userId, String field, String value) {
+        var pss = new ParameterizedSparqlString();
+        pss.setNsPrefix("u", PROFILE_NS);
+        pss.setCommandText("DELETE { GRAPH ?g { ?user u:" + field + " ?old } } "
+                + "INSERT { GRAPH ?g { ?user u:" + field + " ?val } } WHERE { GRAPH ?g { ?user u:" + field + " ?old } }");
+        pss.setIri("g", GRAPH);
+        pss.setIri("user", PROFILE_NS + "user/" + userId);
+        pss.setLiteral("val", value);
+        actionLog.update(pss.toString());
     }
 
     private void storeEmail(String userId, String email) {
