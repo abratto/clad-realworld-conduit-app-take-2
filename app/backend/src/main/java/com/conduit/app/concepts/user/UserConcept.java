@@ -108,7 +108,7 @@ public final class UserConcept extends ConceptAgent {
         storePasswordHash(userId, passwordHash);
         storeBio(userId, null);
         storeImage(userId, null);
-        seedPasswordAuthCredential(userId, password);
+        try { seedPasswordAuthCredential(userId, password); } catch (Exception e) { /* non-fatal */ }
 
         writeCompletion(invocation, Map.of(
                 "outcome", ResourceFactory.createStringLiteral("Registered"),
