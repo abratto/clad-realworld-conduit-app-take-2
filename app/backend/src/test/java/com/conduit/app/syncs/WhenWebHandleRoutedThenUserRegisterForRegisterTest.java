@@ -18,6 +18,7 @@ class WhenWebHandleRoutedThenUserRegisterForRegisterTest extends ConceptTestBase
 
     private static final String FLOW_TOKEN = RdfVocabulary.FLOW_TOKEN_PREFIX + "web-routed-reg-1";
     private static final String TRIGGER_IRI = RdfVocabulary.ACTION_NODE_PREFIX + "web-routed-reg-trigger";
+    private static final String INPUT_IRI = TRIGGER_IRI + "/input";
 
     @Nested
     @DisplayName("WhenRouted")
@@ -43,13 +44,14 @@ class WhenWebHandleRoutedThenUserRegisterForRegisterTest extends ConceptTestBase
             "INSERT DATA {\n" +
             "  GRAPH <" + RdfVocabulary.ACTION_GRAPH_IRI + "> {\n" +
             "    <" + TRIGGER_IRI + "> :concept <" + FlowManager.WEB_CONCEPT_IRI + "> ;\n" +
-            "                     :name    \"handle\" ;\n" +
-            "                     :route   \"/api/users\" ;\n" +
-            "                     :body    [ :username \"jdoe\" ;\n" +
-            "                                :email    \"j@test.com\" ;\n" +
-            "                                :password \"secret\" ] ;\n" +
+            "                     :name    \"request\" ;\n" +
+            "                     :input   <" + INPUT_IRI + "> ;\n" +
             "                     :flow    <" + FLOW_TOKEN + "> .\n" +
-            "    << <" + TRIGGER_IRI + "> :outcome \"routed\" >> :flow <" + FLOW_TOKEN + "> .\n" +
+            "    <" + INPUT_IRI + "> :route    \"/api/users\" ;\n" +
+            "                       :username \"jdoe\" ;\n" +
+            "                       :email    \"j@test.com\" ;\n" +
+            "                       :password \"secret\" .\n" +
+            "    << <" + TRIGGER_IRI + "> :outcome \"received\" >> :flow <" + FLOW_TOKEN + "> .\n" +
             "  }\n" +
             "}\n");
     }

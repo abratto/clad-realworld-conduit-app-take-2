@@ -18,7 +18,6 @@ class WhenUserRegisterRefusedByDuplicateUsernameThenWebRespondForRegisterTest ex
 
     private static final String FLOW_TOKEN = RdfVocabulary.FLOW_TOKEN_PREFIX + "dup-user-reg-1";
     private static final String TRIGGER_IRI = RdfVocabulary.ACTION_NODE_PREFIX + "dup-user-trigger";
-    private static final String USERNAME = "existing_user";
 
     @Nested
     @DisplayName("WhenDuplicateUsername")
@@ -27,23 +26,13 @@ class WhenUserRegisterRefusedByDuplicateUsernameThenWebRespondForRegisterTest ex
         @Test
         void shouldRespond409WhenDuplicateUsername() {
             writeCompletedTrigger();
-            seedUser(USERNAME);
             var sync = new WhenUserRegisterRefusedByDuplicateUsernameThenWebRespondForRegister(log);
             sync.execute();
 
             var pending = findPendingInvocation(FlowManager.WEB_CONCEPT_IRI, "respond");
             assertNotNull(pending, "Web.respond should be scheduled");
-            assertEquals("409", pending.get("status"));
+            assertEquals("409", pending.get("statusCode"));
         }
-    }
-
-    private void seedUser(String username) {
-        log.update(
-            "PREFIX : <" + RdfVocabulary.ACTION_SCHEMA_IRI + ">\n" +
-            "PREFIX u: <https://clad.dev/concept/user#>\n" +
-            "INSERT DATA { GRAPH <concept:user> {\n" +
-            "  <https://clad.dev/concept/user#user/seed> u:username \"" + username + "\" .\n" +
-            "} }");
     }
 
     private void writeCompletedTrigger() {
@@ -54,7 +43,7 @@ class WhenUserRegisterRefusedByDuplicateUsernameThenWebRespondForRegisterTest ex
             "    <" + TRIGGER_IRI + "> :concept <" + UserConcept.IRI + "> ;\n" +
             "                     :name    \"register\" ;\n" +
             "                     :flow    <" + FLOW_TOKEN + "> ;\n" +
-            "                     :refusalReason  \"username already taken: " + USERNAME + "\" .\n" +
+            "                     :refusalReason  \"username already taken: existing_user\" .\n" +
             "    << <" + TRIGGER_IRI + "> :outcome \"refused\" >> :flow <" + FLOW_TOKEN + "> .\n" +
             "  }\n" +
             "}\n");

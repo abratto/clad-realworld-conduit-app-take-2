@@ -18,6 +18,8 @@ class WhenSessionGrantGrantedThenWebRespondForRegisterTest extends ConceptTestBa
 
     private static final String FLOW_TOKEN = RdfVocabulary.FLOW_TOKEN_PREFIX + "session-granted-reg-1";
     private static final String TRIGGER_IRI = RdfVocabulary.ACTION_NODE_PREFIX + "session-granted-trigger";
+    private static final String WEB_REQ_IRI = RdfVocabulary.ACTION_NODE_PREFIX + "web-req-for-session";
+    private static final String WEB_INPUT_IRI = WEB_REQ_IRI + "/input";
 
     @Nested
     @DisplayName("WhenGranted")
@@ -39,11 +41,18 @@ class WhenSessionGrantGrantedThenWebRespondForRegisterTest extends ConceptTestBa
             "PREFIX : <" + RdfVocabulary.ACTION_SCHEMA_IRI + ">\n" +
             "INSERT DATA {\n" +
             "  GRAPH <" + RdfVocabulary.ACTION_GRAPH_IRI + "> {\n" +
+            "    <" + WEB_REQ_IRI + "> :concept <" + FlowManager.WEB_CONCEPT_IRI + "> ;\n" +
+            "                      :name    \"request\" ;\n" +
+            "                      :input   <" + WEB_INPUT_IRI + "> ;\n" +
+            "                      :flow    <" + FLOW_TOKEN + "> .\n" +
+            "    <" + WEB_INPUT_IRI + "> :route    \"/api/users\" ;\n" +
+            "                       :username \"jdoe\" ;\n" +
+            "                       :email    \"jdoe@test.com\" .\n" +
             "    <" + TRIGGER_IRI + "> :concept <" + SessionConcept.IRI + "> ;\n" +
-            "                     :name    \"grant\" ;\n" +
-            "                     :userId  \"user-001\" ;\n" +
-            "                     :sessionToken  \"mock-token-uuid\" ;\n" +
-            "                     :flow    <" + FLOW_TOKEN + "> .\n" +
+            "                      :name    \"grant\" ;\n" +
+            "                      :userId  \"user-001\" ;\n" +
+            "                      :sessionToken  \"mock-token-uuid\" ;\n" +
+            "                      :flow    <" + FLOW_TOKEN + "> .\n" +
             "    << <" + TRIGGER_IRI + "> :outcome \"Granted\" >> :flow <" + FLOW_TOKEN + "> .\n" +
             "  }\n" +
             "}\n");

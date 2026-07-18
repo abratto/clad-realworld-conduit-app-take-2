@@ -46,7 +46,9 @@ public final class WhenSessionGrantGrantedThenWebRespondForRegister extends Sync
                       :name    "request" ;
                       :flow    ?_flow ;
                       :input   ?_web_inp .
-            ?_web_inp :route ?_route .
+            ?_web_inp :route    ?_route ;
+                      :username ?_username ;
+                      :email    ?_email .
             """.formatted(SESSION_IRI, WEB_IRI);
     }
 
@@ -62,7 +64,11 @@ public final class WhenSessionGrantGrantedThenWebRespondForRegister extends Sync
                      :name    "respond" ;
                      :input   [ :statusCode 201 ;
                                 :token ?_token ;
-                                :userId ?_userId ] .
+                                :userId ?_userId ;
+                                :username ?_username ;
+                                :email ?_email ;
+                                :bio "null" ;
+                                :image "null" ] .
             """.formatted(WEB_IRI);
     }
 }

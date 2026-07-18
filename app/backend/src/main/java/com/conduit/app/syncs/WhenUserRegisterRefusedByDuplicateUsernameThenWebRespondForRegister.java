@@ -41,7 +41,7 @@ public final class WhenUserRegisterRefusedByDuplicateUsernameThenWebRespondForRe
                      :flow    ?_flow ;
                      :refusalReason ?_reason .
             << ?_when_1 :outcome "refused" >> :flow ?_flow .
-            FILTER CONTAINS(?_reason, "username")
+            FILTER(CONTAINS(?_reason, "username already taken"))
             """.formatted(USER_IRI);
     }
 
@@ -51,7 +51,7 @@ public final class WhenUserRegisterRefusedByDuplicateUsernameThenWebRespondForRe
             ?_then_1 :concept <%s> ;
                      :name    "respond" ;
                      :input   [ :statusCode 409 ;
-                                :errorType "duplicate-username" ] .
+                                :message "username has already been taken" ] .
             """.formatted(WEB_IRI);
     }
 }

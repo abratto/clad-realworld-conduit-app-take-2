@@ -11,22 +11,22 @@ import jakarta.inject.Singleton;
 
 @SyncMetadata(
         flow = "Register",
-        step = 6,
-        triggeredBy = "User/register[refused] (duplicate email)",
-        fires = "Web/respond[409]")
+        step = 2,
+        triggeredBy = "User/register[refused] (blank field)",
+        fires = "Web/respond[422]")
 @Singleton
-public final class WhenUserRegisterRefusedByDuplicateEmailThenWebRespondForRegister extends SyncAgent {
+public final class WhenUserRegisterRefusedByBlankFieldThenWebRespondForRegister extends SyncAgent {
 
     private static final String WEB_IRI = FlowManager.WEB_CONCEPT_IRI;
     private static final String USER_IRI = UserConcept.IRI;
 
     @Inject
-    public WhenUserRegisterRefusedByDuplicateEmailThenWebRespondForRegister(ActionLog actionLog) {
+    public WhenUserRegisterRefusedByBlankFieldThenWebRespondForRegister(ActionLog actionLog) {
         super(actionLog);
     }
 
     @Override
-    public String syncName() { return "whenUserRegisterRefusedByDuplicateEmailThenWebRespondForRegister"; }
+    public String syncName() { return "whenUserRegisterRefusedByBlankFieldThenWebRespondForRegister"; }
 
     @Override
     public SyncTrigger trigger() {
@@ -41,7 +41,7 @@ public final class WhenUserRegisterRefusedByDuplicateEmailThenWebRespondForRegis
                      :flow    ?_flow ;
                      :refusalReason ?_reason .
             << ?_when_1 :outcome "refused" >> :flow ?_flow .
-            FILTER(CONTAINS(?_reason, "email already taken"))
+            FILTER(CONTAINS(?_reason, "blank"))
             """.formatted(USER_IRI);
     }
 
@@ -50,8 +50,8 @@ public final class WhenUserRegisterRefusedByDuplicateEmailThenWebRespondForRegis
         return """
             ?_then_1 :concept <%s> ;
                      :name    "respond" ;
-                     :input   [ :statusCode 409 ;
-                                :message "email has already been taken" ] .
+                     :input   [ :statusCode 422 ;
+                                :message "can't be blank" ] .
             """.formatted(WEB_IRI);
     }
 }

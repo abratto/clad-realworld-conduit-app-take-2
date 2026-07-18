@@ -21,8 +21,7 @@ import reactor.core.publisher.Mono;
 
 import com.conduit.app.api.LoginRequest;
 import com.conduit.app.api.LoginSuccessResponse;
-import com.conduit.app.api.RegisterRequest;
-import com.conduit.app.api.RegisterSuccessResponse;
+
 
 import java.util.Map;
 
@@ -40,7 +39,7 @@ import java.util.Map;
  * its role corresponds to the {@code Web} concept of the WYSIWID architecture.
  */
 @Tag(name = "web")
-@Controller
+@Controller("/login")
 public class WebController {
 
     private final FlowManager flowManager;
@@ -52,7 +51,7 @@ public class WebController {
         this.syncDispatcher = syncDispatcher;
     }
 
-    @Post(value = "/login", consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
+    @Post(consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
         @Operation(
             summary = "Authenticate a user",
             description = "Starts the CLAD login flow at the Web bootstrap boundary and waits for the authored Web/respond result.")
@@ -80,29 +79,4 @@ public class WebController {
         return syncDispatcher.awaitResponse(root.flowToken());
     }
 
-    @Post("/api/users")
-    @Operation(
-            summary = "Register a new user",
-            description = "Creates a new user account and returns a JWT token.")
-    @ApiResponse(
-            responseCode = "201",
-            description = "User registered successfully.",
-            content = @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(implementation = RegisterSuccessResponse.class)))
-    @ApiResponse(
-            responseCode = "422",
-            description = "Validation error.",
-            content = @Content(mediaType = MediaType.APPLICATION_JSON))
-    @ApiResponse(
-            responseCode = "409",
-            description = "Conflict — username or email already taken.",
-            content = @Content(mediaType = MediaType.APPLICATION_JSON))
-    public Mono<HttpResponse<?>> register(@Body RegisterRequest body) {
-        var user = body.user();
-        ActionRecord root = flowManager.rootAction("/api/users", Map.of(
-                "username", user.username() == null ? "" : user.username(),
-                "email", user.email() == null ? "" : user.email(),
-                "password", user.password() == null ? "" : user.password()
-        ));
-        return syncDispatcher.awaitResponse(root.flowToken());
-    }
 }

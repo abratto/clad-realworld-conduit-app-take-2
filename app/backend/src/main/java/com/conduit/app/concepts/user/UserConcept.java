@@ -75,9 +75,9 @@ public final class UserConcept extends ConceptAgent {
         String email = invocation.binding("email");
         String password = invocation.binding("password");
 
-        if (username == null) { writeError(invocation, "missing username"); return; }
-        if (email == null) { writeError(invocation, "missing email"); return; }
-        if (password == null) { writeError(invocation, "missing password"); return; }
+        if (username == null || username.isBlank()) { writeRefusal(invocation, "blank username"); return; }
+        if (email == null || email.isBlank()) { writeRefusal(invocation, "blank email"); return; }
+        if (password == null || password.isBlank()) { writeRefusal(invocation, "blank password"); return; }
 
         if (existsByUsername(username)) {
             writeRefusal(invocation, "username already taken: " + username);
