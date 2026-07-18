@@ -28,8 +28,8 @@ Conventions imposed by the RealWorld Conduit API spec that are NOT derivable fro
 
 ## Contract test suite
 
-- [Hurl collection](https://github.com/realworld-apps/realworld/tree/main/specs/api/hurl)
-- [`run-api-tests-hurl.sh`](https://github.com/realworld-apps/realworld/blob/main/specs/api/run-api-tests-hurl.sh)
+- [Hurl collection](https://github.com/realworld-apps/realworld/tree/main/specs/api/hurl) — mirrored locally at `specs/api/hurl/`
+- Local test runner: `specs/api/hurl/run-hurl-tests.sh`
 
 ## Scope
 

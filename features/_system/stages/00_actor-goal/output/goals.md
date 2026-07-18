@@ -21,8 +21,8 @@
 This system interfaces with the RealWorld Conduit API spec. The adapter format is not a design choice — it is fixed by the external spec.
 
 - **Source:** [RealWorld Backend API Spec](https://docs.realworld.show/specifications/backend/introduction/)
-- **OpenAPI spec:** [openapi.yml](https://github.com/realworld-apps/realworld/blob/main/specs/api/openapi.yml)
-- **Contract test suite:** [Hurl collection](https://github.com/realworld-apps/realworld/tree/main/specs/api/hurl) + [`run-api-tests-hurl.sh`](https://github.com/realworld-apps/realworld/blob/main/specs/api/run-api-tests-hurl.sh)
+- **OpenAPI spec:** `specs/api/openapi.yml` ([remote](https://github.com/realworld-apps/realworld/blob/main/specs/api/openapi.yml))
+- **Contract test suite:** `specs/api/hurl/` ([remote collection](https://github.com/realworld-apps/realworld/tree/main/specs/api/hurl))
 - **Fixed conventions:** See `output/port-spec.md`
 
 ## Out of scope
