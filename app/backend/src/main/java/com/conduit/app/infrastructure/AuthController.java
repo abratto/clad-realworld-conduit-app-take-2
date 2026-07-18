@@ -3,6 +3,7 @@ package com.conduit.app.infrastructure;
 import com.conduit.app.api.LoginFailureResponse;
 import com.conduit.app.api.LoginRequest;
 import com.conduit.app.api.LoginSuccessResponse;
+import com.conduit.app.api.RegisterRequest;
 import com.conduit.app.engine.ActionRecord;
 import com.conduit.app.engine.FlowManager;
 import com.conduit.app.engine.ResponseAssembler;
@@ -85,5 +86,17 @@ public class AuthController {
                 "password", body.password() == null ? "" : body.password()
         ));
         return assemble("login", syncDispatcher.awaitResponse(root.flowToken()));
+    }
+
+    @Post(value = "/users/login", consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
+    @Operation(summary = "Sign in with email and password (Conduit spec)")
+    public Mono<HttpResponse<?>> loginByEmail(@Body RegisterRequest body) {
+        String email = body.user() != null ? body.user().email() : "";
+        String password = body.user() != null ? body.user().password() : "";
+        ActionRecord root = flowManager.rootAction("signin", Map.of(
+                "email", email,
+                "password", password
+        ));
+        return assemble("signin", syncDispatcher.awaitResponse(root.flowToken()));
     }
 }

@@ -10,16 +10,26 @@ import com.conduit.app.engine.SyncTrigger;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 
+/**
+ * Sync: WhenUserLookupByUsernameFoundThenPasswordAuthCheckForLogin
+ *
+ * <p>When: {@code User/lookupByUsername[outcome=FOUND]} (in a login flow)
+ * <p>Then: {@code PasswordAuth/check { userId, password }}
+ *
+ * <p>Joins the User lookup output (for {@code userId}) with the original Web
+ * request input (for {@code password}) via shared {@code ?_flow}.
+ */
 @SyncMetadata(
         flow = "Login",
         step = 2,
-        triggeredBy = "User/lookupByEmail[FOUND]",
-        fires = "PasswordAuth/check")
+        triggeredBy = "User/lookupByUsername[FOUND]",
+        fires = "PasswordAuth/check",
+        where = "same flow as the login request")
 @Singleton
 public final class WhenUserLookupByUsernameFoundThenPasswordAuthCheckForLogin extends SyncAgent {
 
-    private static final String USER_IRI = UserConcept.IRI;
-    private static final String PW_IRI = PasswordAuthConcept.IRI;
+    private static final String WEB_IRI = FlowManager.WEB_CONCEPT_IRI;
+    private static final String LOGIN_ROUTE = "login";
 
     @Inject
     public WhenUserLookupByUsernameFoundThenPasswordAuthCheckForLogin(ActionLog actionLog) {
@@ -31,23 +41,23 @@ public final class WhenUserLookupByUsernameFoundThenPasswordAuthCheckForLogin ex
 
     @Override
     public SyncTrigger trigger() {
-        return new SyncTrigger(USER_IRI, "lookupByEmail", null);
+        return new SyncTrigger(UserConcept.IRI, "lookupByUsername", null);
     }
 
     @Override
     protected String whereClause() {
         return """
             ?_when_1 :concept <%s> ;
-                     :name    "lookupByEmail" ;
-                     :flow    ?_flow ;
+                     :name    "lookupByUsername" ;
                      :userId  ?_userId .
             << ?_when_1 :outcome "FOUND" >> :flow ?_flow .
-            ?_req :concept <%s> ;
-                   :name    "request" ;
-                   :flow    ?_flow ;
-                   :input   ?_inp .
-            ?_inp :password ?_password .
-            """.formatted(USER_IRI, FlowManager.WEB_CONCEPT_IRI);
+            ?_web_req :concept <%s> ;
+                      :name    "request" ;
+                      :flow    ?_flow ;
+                      :input   ?_web_inp .
+            ?_web_inp :route    ?_route ;
+                      :password ?_password .
+            """.formatted(UserConcept.IRI, WEB_IRI);
     }
 
     @Override
@@ -56,6 +66,11 @@ public final class WhenUserLookupByUsernameFoundThenPasswordAuthCheckForLogin ex
             ?_then_1 :concept <%s> ;
                      :name    "check" ;
                      :input   [ :userId ?_userId ; :password ?_password ] .
-            """.formatted(PW_IRI);
+            """.formatted(PasswordAuthConcept.IRI);
+    }
+
+    @Override
+    protected String parameterizeSparql(String sparql) {
+        return bindLiteral(sparql, "_route", LOGIN_ROUTE);
     }
 }
