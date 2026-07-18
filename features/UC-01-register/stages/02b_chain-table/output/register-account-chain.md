@@ -10,10 +10,9 @@
 |---|---|---|---|---|---|---|
 | 1 | `Web/request[POST /api/users]` | `Web.handle` | route, body `{username, email, password}` | `Routed(username, email, password)` \| `Refused:blankFields` | HTTP entry point (R4); validates request body is parseable and required fields present. |
 | 2 | `Web.handle[Refused:blankFields]` | `Web.respond[422]` | `{errors: {<field>: ["can't be blank"]}}` | `Sent` | Blank field detected — return validation error. |
-| 3 | `Web.handle[Routed(username, email, password)]` | `User.register` | username, email, password | `Registered` \| `Refused:duplicateUsername` \| `Refused:duplicateEmail` | Create user record after verifying username and email uniqueness. |
+| 3 | `Web.handle[Routed(username, email, password)]` | `User.register` | username, email, password | `Registered` \| `refused` | Create user record after verifying username and email uniqueness. Precondition failure means username or email is taken. |
 | 4 | `User.register[Registered]` | `Session.grant` | userId | `Granted` | Mint a JWT session token for the newly registered user so they can authenticate immediately. |
-| 5 | `User.register[Refused:duplicateUsername]` | `Web.respond[409]` | `{errors: {username: ["has already been taken"]}}` | `Sent` | Duplicate username — return conflict error. |
-| 6 | `User.register[Refused:duplicateEmail]` | `Web.respond[409]` | `{errors: {email: ["has already been taken"]}}` | `Sent` | Duplicate email — return conflict error. |
+| 5 | `User.register[refused]` | `Web.respond[409]` | `{errors: {<field>: ["has already been taken"]}}` | `Sent` | Precondition failure — sync checks User state to determine which field caused the conflict and returns the appropriate error body. |
 | 7 | `Session.grant[Granted]` | `Web.respond[201]` | `{user: {username, email, bio: null, image: null, token}}` | `Sent` | Return success response with user object and JWT token. |
 
 ## Diagram
@@ -27,10 +26,8 @@ stateDiagram-v2
     User_register --> Session_grant : [Registered]
     Session_grant --> Web_respond201 : [Granted]
     Web_respond201 --> [*]
-    User_register --> Web_respond409_dupUser : [Refused:duplicateUsername]
-    User_register --> Web_respond409_dupEmail : [Refused:duplicateEmail]
-    Web_respond409_dupUser --> [*]
-    Web_respond409_dupEmail --> [*]
+    User_register --> Web_respond409 : [refused]
+    Web_respond409 --> [*]
 ```
 
 ## Cross-checks
