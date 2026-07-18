@@ -17,7 +17,7 @@
 |---|---|---|---|
 | `Web` | route table | `handle`, `respond` | Bootstrap concept |
 | `Session` | token → userId mapping | `lookup`, `grant` | Validate token, mint new one on update |
-| `User` | username, email, passwordHash, bio, image | `register`, `lookupByEmail`, `lookupByUsername`, `updateProfile` | New action: `updateProfile` |
+| `User` | username, email, passwordHash, bio, image | `register`, `lookupByEmail`, `lookupByUsername`, `getProfile`, `updateProfile` | New actions: `getProfile`, `updateProfile` |
 | `PasswordAuth` | passwordHash, failedAttempts, lockedUntil | `setCredential`, `check` | Only needed when password is updated |
 
 ## Coverage check
