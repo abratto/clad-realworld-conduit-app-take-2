@@ -182,6 +182,20 @@ public class LoginStepDefinitions {
         }
     }
 
+    @When("^the user submits POST /api/users/login with email \"([^\"]*)\" and password \"([^\"]*)\"$")
+    public void loginByEmail(String email, String password) {
+        try {
+            response = client.toBlocking().exchange(
+                    HttpRequest.POST("/api/login",
+                            new LoginRequest(null, email, password)),
+                    String.class);
+            failure = null;
+        } catch (HttpClientResponseException e) {
+            failure = e;
+            response = null;
+        }
+    }
+
     // -----------------------------------------------------------------------
     // Then — derives from usecase.md Expected outcomes: + Postconditions
     // and 03_syncs/output/ response body literals

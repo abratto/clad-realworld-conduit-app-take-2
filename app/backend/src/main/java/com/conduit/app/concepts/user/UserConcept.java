@@ -47,6 +47,7 @@ public final class UserConcept extends ConceptAgent {
     @Override
     public void pollAll() {
         pollAndProcess("register");
+        pollAndProcess("lookupByEmail");
         pollAndProcess("lookupByUsername");
     }
 
@@ -54,6 +55,7 @@ public final class UserConcept extends ConceptAgent {
     protected void processInvocation(ActionRecord invocation) {
         switch (invocation.actionName()) {
             case "register" -> doRegister(invocation);
+            case "lookupByEmail" -> doLookupByEmail(invocation);
             case "lookupByUsername" -> doLookup(invocation);
             default -> writeError(invocation, "unknown action: " + invocation.actionName());
         }
@@ -67,6 +69,17 @@ public final class UserConcept extends ConceptAgent {
         pss.setIri("g", GRAPH);
         pss.setIri("user", PROFILE_NS + "user/" + userId);
         pss.setLiteral("username", username);
+        actionLog.update(pss.toString());
+    }
+
+    /** Test/seed helper to pre-populate the user graph with an email. */
+    public void seedEmail(String userId, String email) {
+        var pss = new ParameterizedSparqlString();
+        pss.setNsPrefix("u", PROFILE_NS);
+        pss.setCommandText("INSERT DATA { GRAPH ?g { ?user u:email ?email } }");
+        pss.setIri("g", GRAPH);
+        pss.setIri("user", PROFILE_NS + "user/" + userId);
+        pss.setLiteral("email", email);
         actionLog.update(pss.toString());
     }
 
@@ -100,6 +113,26 @@ public final class UserConcept extends ConceptAgent {
                 "outcome", ResourceFactory.createStringLiteral("Registered"),
                 "userId", ResourceFactory.createStringLiteral(userId),
                 "username", ResourceFactory.createStringLiteral(username)));
+    }
+
+    private void doLookupByEmail(ActionRecord invocation) {
+        String email = invocation.binding("email");
+        if (email == null) { writeError(invocation, "missing email"); return; }
+        String userId = findUserIdByEmail(email);
+        if (userId == null) {
+            writeRefusal(invocation, "email not found: " + email);
+        } else {
+            String username = findUsernameByUserId(userId);
+            String bio = findFieldByUserId(userId, "bio");
+            String image = findFieldByUserId(userId, "image");
+            writeCompletion(invocation, Map.of(
+                    "outcome", ResourceFactory.createStringLiteral("FOUND"),
+                    "userId", ResourceFactory.createStringLiteral(userId),
+                    "username", ResourceFactory.createStringLiteral(username != null ? username : ""),
+                    "email", ResourceFactory.createStringLiteral(email),
+                    "bio", ResourceFactory.createStringLiteral(bio != null ? bio : ""),
+                    "image", ResourceFactory.createStringLiteral(image != null ? image : "")));
+        }
     }
 
     private void doLookup(ActionRecord invocation) {
@@ -174,6 +207,38 @@ public final class UserConcept extends ConceptAgent {
         pss.setIri("g", GRAPH);
         pss.setLiteral("email", email);
         return actionLog.ask(pss.toString());
+    }
+
+    private String findUserIdByEmail(String email) {
+        var pss = new ParameterizedSparqlString();
+        pss.setNsPrefix("u", PROFILE_NS);
+        pss.setCommandText("SELECT ?user WHERE { GRAPH ?g { ?user u:email ?email } } LIMIT 1");
+        pss.setIri("g", GRAPH);
+        pss.setLiteral("email", email);
+        List<Map<String, String>> rows = actionLog.select(pss.toString());
+        if (rows.isEmpty()) return null;
+        String iri = rows.get(0).get("user");
+        return iri == null ? null : iri.substring(PROFILE_NS.length() + "user/".length());
+    }
+
+    private String findUsernameByUserId(String userId) {
+        var pss = new ParameterizedSparqlString();
+        pss.setNsPrefix("u", PROFILE_NS);
+        pss.setCommandText("SELECT ?username WHERE { GRAPH ?g { ?user u:username ?username } }");
+        pss.setIri("g", GRAPH);
+        pss.setIri("user", PROFILE_NS + "user/" + userId);
+        List<Map<String, String>> rows = actionLog.select(pss.toString());
+        return rows.isEmpty() ? null : rows.get(0).get("username");
+    }
+
+    private String findFieldByUserId(String userId, String field) {
+        var pss = new ParameterizedSparqlString();
+        pss.setNsPrefix("u", PROFILE_NS);
+        pss.setCommandText("SELECT ?val WHERE { GRAPH ?g { ?user u:" + field + " ?val } }");
+        pss.setIri("g", GRAPH);
+        pss.setIri("user", PROFILE_NS + "user/" + userId);
+        List<Map<String, String>> rows = actionLog.select(pss.toString());
+        return rows.isEmpty() ? null : rows.get(0).get("val");
     }
 
     private String findUserIdByUsername(String username) {

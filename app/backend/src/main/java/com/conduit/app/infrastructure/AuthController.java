@@ -81,6 +81,7 @@ public class AuthController {
     public Mono<HttpResponse<?>> login(@Body LoginRequest body) {
         ActionRecord root = flowManager.rootAction("login", Map.of(
                 "username", body.username() == null ? "" : body.username(),
+                "email", body.email() == null ? "" : body.email(),
                 "password", body.password() == null ? "" : body.password()
         ));
         return assemble("login", syncDispatcher.awaitResponse(root.flowToken()));

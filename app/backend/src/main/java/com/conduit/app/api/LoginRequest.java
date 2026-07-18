@@ -9,5 +9,12 @@ import io.swagger.v3.oas.annotations.media.Schema;
 public record LoginRequest(
 	@Schema(description = "Username to authenticate.", example = "ada")
 	String username,
+	@Schema(description = "Email to authenticate.", example = "ada@test.com")
+	String email,
 	@Schema(description = "Plain-text password for the demo login flow.", example = "correct-horse-battery-staple")
-	String password) {}
+	String password) {
+
+	public LoginRequest(String username, String password) {
+		this(username, null, password);
+	}
+}
