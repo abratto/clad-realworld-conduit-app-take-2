@@ -12,7 +12,19 @@ public class ResponseAssembler {
 
     public Object assemble(String flowName, Map<String, String> fields) {
         return switch (flowName) {
-            case "login" -> new LoginSuccessResponse(fields.get("sessionToken"));
+            case "login" -> {
+                String token = fields.get("token");
+                if (token == null) token = fields.get("sessionToken");
+                String username = fields.get("username");
+                String email = fields.get("email");
+                if (username != null && email != null) {
+                    yield new RegisterSuccessResponse(
+                        new RegisterSuccessResponse.RegisteredUser(
+                            email, token, username,
+                            fields.get("bio"), fields.get("image")));
+                }
+                yield new LoginSuccessResponse(token);
+            }
             case "/api/users" -> new RegisterSuccessResponse(
                     new RegisterSuccessResponse.RegisteredUser(
                             fields.get("email"),

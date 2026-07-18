@@ -74,6 +74,7 @@ public class Application {
         void onStartup(StartupEvent event) {
             String userId = "ada-0001";
             users.seedUser(userId, "ada");
+            users.seedEmail(userId, "ada@test.com");
             passwords.seedCredential(userId, "correct-horse-battery-staple");
         }
     }

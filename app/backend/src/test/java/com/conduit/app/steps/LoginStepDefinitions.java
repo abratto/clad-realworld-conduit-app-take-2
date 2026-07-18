@@ -6,13 +6,11 @@ import com.conduit.app.engine.SyncDispatcher;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import io.micronaut.context.ApplicationContext;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
-import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.exceptions.HttpClientResponseException;
-import io.micronaut.runtime.server.EmbeddedServer;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -44,38 +42,14 @@ public class LoginStepDefinitions {
     // Session.spec.md:       GRANTED
     // -----------------------------------------------------------------------
 
-    private static EmbeddedServer server;
-    private static HttpClient client;
-
     static HttpResponse<String> response;
     static HttpClientResponseException failure;
 
-    // -----------------------------------------------------------------------
-    // Helpers — server lifecycle (lazy init, no Cucumber @BeforeAll)
-    // -----------------------------------------------------------------------
-
-    private static synchronized void ensureServerRunning() {
-        if (server == null || !server.isRunning()) {
-            server = ApplicationContext.run(EmbeddedServer.class);
-            client = server.getApplicationContext().createBean(HttpClient.class, server.getURI());
-        }
-    }
-
-    // -----------------------------------------------------------------------
-    // Given — derives from usecase.md Pre-conditions: bullets
-    // -----------------------------------------------------------------------
-
-    /** 
-     * Derived from usecase.md Pre-conditions:
-     * "A registered User with that username exists."
-     * Seeds: User.lookupByUsername must return FOUND(userId).
-     * In the reference profile, DemoSeed registers "ada" at application startup.
-     */
     @Given("the system is running")
     public void the_system_is_running() {
-        ensureServerRunning();
-        assertNotNull(server, "EmbeddedServer must be running");
-        assertTrue(server.isRunning(), "EmbeddedServer must be running");
+        ServerContext.ensureRunning();
+        assertNotNull(ServerContext.server());
+        assertTrue(ServerContext.server().isRunning());
     }
 
     /**
@@ -142,7 +116,7 @@ public class LoginStepDefinitions {
         int lockoutThreshold = 5;
         for (int i = 0; i < lockoutThreshold; i++) {
             try {
-                client.toBlocking().exchange(
+                ServerContext.client().toBlocking().exchange(
                         HttpRequest.POST("/login",
                                 new LoginRequest("ada", "wrong")),
                         String.class);
@@ -171,9 +145,39 @@ public class LoginStepDefinitions {
     @When("the user submits POST \\/login with {string} and {string}")
     public void login(String username, String password) {
         try {
-            response = client.toBlocking().exchange(
+            response = ServerContext.client().toBlocking().exchange(
                     HttpRequest.POST("/login",
                             new LoginRequest(username, password)),
+                    String.class);
+            failure = null;
+        } catch (HttpClientResponseException e) {
+            failure = e;
+            response = null;
+        }
+    }
+
+    @Given("a user is registered with email {string} and password {string}")
+    public void register_aux(String email, String password) {
+        ServerContext.ensureRunning();
+        String username = email.split("@")[0] + "_" + System.currentTimeMillis();
+        try {
+                ServerContext.client().toBlocking().exchange(
+                        HttpRequest.POST("/api/users",
+                                new com.conduit.app.api.RegisterRequest(
+                                    new com.conduit.app.api.RegisterRequest.RegisterUser(
+                                        username, email, password))),
+                        String.class);
+            } catch (Exception e) {
+            }
+        }
+
+        @When("^the user submits login with email \"([^\"]*)\" and password \"([^\"]*)\"$")
+        public void loginByEmail(String email, String password) {
+            ServerContext.ensureRunning();
+            try {
+                response = ServerContext.client().toBlocking().exchange(
+                    HttpRequest.POST("/api/users/login",
+                            Map.of("user", Map.of("email", email, "password", password))),
                     String.class);
             failure = null;
         } catch (HttpClientResponseException e) {

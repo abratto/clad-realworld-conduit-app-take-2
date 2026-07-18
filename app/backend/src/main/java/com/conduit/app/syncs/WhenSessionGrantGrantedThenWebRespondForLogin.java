@@ -9,21 +9,16 @@ import com.conduit.app.engine.SyncTrigger;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 
-/**
- * Sync: WhenSessionGrantGrantedThenWebRespondForLogin
- *
- * <p>When: {@code Session/grant[outcome=GRANTED]}
- * <p>Then: {@code Web/respond { statusCode: 200, sessionToken }}
- */
 @SyncMetadata(
         flow = "Login",
         step = 4,
-        triggeredBy = "Session/grant[GRANTED]",
+        triggeredBy = "Session/grant[Granted]",
         fires = "Web/respond[200]")
 @Singleton
 public final class WhenSessionGrantGrantedThenWebRespondForLogin extends SyncAgent {
 
     private static final String WEB_IRI = FlowManager.WEB_CONCEPT_IRI;
+    private static final String SESSION_IRI = SessionConcept.IRI;
     private static final String LOGIN_ROUTE = "login";
 
     @Inject
@@ -36,7 +31,7 @@ public final class WhenSessionGrantGrantedThenWebRespondForLogin extends SyncAge
 
     @Override
     public SyncTrigger trigger() {
-        return new SyncTrigger(SessionConcept.IRI, "grant", null);
+        return new SyncTrigger(SESSION_IRI, "grant", null);
     }
 
     @Override
@@ -44,14 +39,14 @@ public final class WhenSessionGrantGrantedThenWebRespondForLogin extends SyncAge
         return """
             ?_when_1 :concept <%s> ;
                      :name    "grant" ;
-                     :sessionToken ?_sessionToken .
+                     :sessionToken ?_token .
             << ?_when_1 :outcome "Granted" >> :flow ?_flow .
             ?_web_req :concept <%s> ;
                       :name    "request" ;
                       :flow    ?_flow ;
                       :input   ?_web_inp .
             ?_web_inp :route ?_route .
-            """.formatted(SessionConcept.IRI, WEB_IRI);
+            """.formatted(SESSION_IRI, WEB_IRI);
     }
 
     @Override
@@ -59,7 +54,7 @@ public final class WhenSessionGrantGrantedThenWebRespondForLogin extends SyncAge
         return """
             ?_then_1 :concept <%s> ;
                      :name    "respond" ;
-                     :input   [ :statusCode 200 ; :sessionToken ?_sessionToken ] .
+                     :input   [ :statusCode 200 ; :token ?_token ; :sessionToken ?_token ] .
             """.formatted(WEB_IRI);
     }
 
