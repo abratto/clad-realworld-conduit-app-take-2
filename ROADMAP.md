@@ -17,7 +17,8 @@
 | 2 | Conduit backend — core | UC-01-register | done | Registration complete |
 | 3 | Conduit backend — auth | UC-02-sign-in | done | Email-based sign-in complete |
 | 4 | Conduit backend — profile | UC-03-manage-profile | done | View & update profile (71 tests) |
-| 5 | Conduit backend — public profile | UC-04-view-profile | next | View any user's public profile |
+| 5 | Conduit backend — public profile | UC-04-view-profile | done | Public profile with following indicator |
+| 6 | Conduit backend — articles | UC-05-manage-articles | next | Create, update, delete articles |
 
 ## Backlog
 
