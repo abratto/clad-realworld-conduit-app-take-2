@@ -21,9 +21,9 @@
   required gate is not approved, the script stops the pipeline.
   The agent must NOT skip updating this section after each gate approval.
 -->
-- **Gate 1 (Requirements):** `pending` | `approved` | `rejected`
-- **Gate 2 (Architecture):** `pending` | `approved` | `rejected`
-- **Gate 3 (Executable spec):** `pending` | `approved` | `rejected`
+- **Gate 1 (Requirements):** `approved` | `approved` | `rejected`
+- **Gate 2 (Architecture):** `approved` | `approved` | `rejected`
+- **Gate 3 (Executable spec):** `approved` | `approved` | `rejected`
 - **Last completed stage:** `TBD`
 - **Corrections at last gate:** `TBD`
 - **Deferred concepts:** `TBD`
