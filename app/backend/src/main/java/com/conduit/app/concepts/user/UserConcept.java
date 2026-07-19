@@ -147,10 +147,14 @@ public final class UserConcept extends ConceptAgent {
         if (userId == null) {
             writeRefusal(invocation, "username not found: " + username);
         } else {
+            String bio = findFieldByUserId(userId, "bio");
+            String image = findFieldByUserId(userId, "image");
             writeCompletion(invocation, Map.of(
                     "outcome", ResourceFactory.createStringLiteral("FOUND"),
                     "userId", ResourceFactory.createStringLiteral(userId),
-                    "username", ResourceFactory.createStringLiteral(username)));
+                    "username", ResourceFactory.createStringLiteral(username),
+                    "bio", ResourceFactory.createStringLiteral(bio != null ? bio : ""),
+                    "image", ResourceFactory.createStringLiteral(image != null ? image : "")));
         }
     }
 
