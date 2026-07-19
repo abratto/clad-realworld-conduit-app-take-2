@@ -37,6 +37,7 @@ public final class ArticleConcept extends ConceptAgent {
         pollAndProcess("update");
         pollAndProcess("delete");
         pollAndProcess("authorCheck");
+        pollAndProcess("list");
     }
 
     @Override
@@ -47,8 +48,29 @@ public final class ArticleConcept extends ConceptAgent {
             case "update" -> doUpdate(invocation);
             case "delete" -> doDelete(invocation);
             case "authorCheck" -> doAuthorCheck(invocation);
+            case "list" -> doList(invocation);
             default -> writeError(invocation, "unknown action: " + invocation.actionName());
         }
+    }
+
+    private void doList(ActionRecord invocation) {
+        String tag = invocation.binding("tag");
+        String author = invocation.binding("author");
+        String limitStr = invocation.binding("limit");
+        String offsetStr = invocation.binding("offset");
+        int limit = 20;
+        int offset = 0;
+        if (limitStr != null) try { limit = Integer.parseInt(limitStr); } catch (Exception e) {}
+        if (offsetStr != null) try { offset = Integer.parseInt(offsetStr); } catch (Exception e) {}
+        var pss = new ParameterizedSparqlString();
+        pss.setNsPrefix("a", NS);
+        String sparql = "SELECT ?art ?slug ?title WHERE { GRAPH ?g { ?art a:slug ?slug ; a:title ?title } } ORDER BY DESC(?art) LIMIT " + limit + " OFFSET " + offset;
+        pss.setCommandText(sparql);
+        pss.setIri("g", GRAPH);
+        List<Map<String, String>> rows = actionLog.select(pss.toString());
+        writeCompletion(invocation, Map.of(
+                "outcome", ResourceFactory.createStringLiteral("Listed"),
+                "count", ResourceFactory.createStringLiteral(String.valueOf(rows.size()))));
     }
 
     private void doCreate(ActionRecord invocation) {
