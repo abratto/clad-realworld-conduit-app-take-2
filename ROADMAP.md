@@ -18,7 +18,8 @@
 | 3 | Conduit backend — auth | UC-02-sign-in | done | Email-based sign-in complete |
 | 4 | Conduit backend — profile | UC-03-manage-profile | done | View & update profile (71 tests) |
 | 5 | Conduit backend — public profile | UC-04-view-profile | done | Public profile with following indicator |
-| 6 | Conduit backend — articles | UC-05-manage-articles | next | Create, update, delete articles |
+| 6 | Conduit backend — articles | UC-05-manage-articles | done | Article CRUD (73 tests) |
+| 7 | Conduit backend — browse | UC-06-browse-articles | next | Browse articles with filters |
 
 ## Backlog
 
