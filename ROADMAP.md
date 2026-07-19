@@ -19,7 +19,8 @@
 | 4 | Conduit backend — profile | UC-03-manage-profile | done | View & update profile (71 tests) |
 | 5 | Conduit backend — public profile | UC-04-view-profile | done | Public profile with following indicator |
 | 6 | Conduit backend — articles | UC-05-manage-articles | done | Article CRUD (73 tests) |
-| 7 | Conduit backend — browse | UC-06-browse-articles | next | Browse articles with filters |
+| 7 | Conduit backend — browse | UC-06-browse-articles | done | Browse articles with pagination |
+| 8 | Conduit backend — reading | UC-07-read-article | next | Read single article by slug |
 
 ## Backlog
 
