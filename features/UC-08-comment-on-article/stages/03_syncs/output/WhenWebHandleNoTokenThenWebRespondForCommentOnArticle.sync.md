@@ -1,4 +1,4 @@
-sync WhenWebHandleRefusedNoTokenThenWebRespondForCommentOnArticle
+sync WhenWebHandleNoTokenThenWebRespondForCommentOnArticle
 
 ## Sync Contract Matrix
 

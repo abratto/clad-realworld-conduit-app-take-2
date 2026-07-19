@@ -1,4 +1,4 @@
-sync WhenCommentAddRefusedBlankBodyThenWebRespondForCommentOnArticle
+sync WhenCommentAddBlankBodyThenWebRespondForCommentOnArticle
 
 ## Sync Contract Matrix
 

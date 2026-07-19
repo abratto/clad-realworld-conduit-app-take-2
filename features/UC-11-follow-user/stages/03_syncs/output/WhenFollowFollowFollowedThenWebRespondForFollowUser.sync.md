@@ -1,4 +1,4 @@
-sync WhenFollowFollowedThenWebRespondForFollowUser
+sync WhenFollowFollowFollowedThenWebRespondForFollowUser
 ## Rule
 ```
 when { Follow/follow: [ followerId: ?_ ; profileId: ?_ ] => [ outcome: "Followed" ] }

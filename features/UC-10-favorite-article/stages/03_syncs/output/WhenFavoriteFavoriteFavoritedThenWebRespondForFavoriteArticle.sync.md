@@ -1,4 +1,4 @@
-sync WhenFavoriteFavoritedThenWebRespondForFavoriteArticle
+sync WhenFavoriteFavoriteFavoritedThenWebRespondForFavoriteArticle
 ### Rule
 ```
 when { Favorite/favorite: [ userId: ?_ ; articleId: ?_ ] => [ outcome: "Favorited" ] }

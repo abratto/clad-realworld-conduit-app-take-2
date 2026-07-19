@@ -10,11 +10,11 @@ import jakarta.inject.Singleton;
 
 @SyncMetadata(flow = "Comment", step = 2, triggeredBy = "Web/handle[Refused:noToken]", fires = "Web/respond[401]")
 @Singleton
-public final class WhenWebHandleRefusedNoTokenThenWebRespondForCommentOnArticle extends SyncAgent {
+public final class WhenWebHandleNoTokenThenWebRespondForCommentOnArticle extends SyncAgent {
     private static final String WEB_IRI = FlowManager.WEB_CONCEPT_IRI;
     private static final String COMMENT_ROUTE = "/api/articles";
-    @Inject public WhenWebHandleRefusedNoTokenThenWebRespondForCommentOnArticle(ActionLog l) { super(l); }
-    @Override public String syncName() { return "whenWebHandleRefusedNoTokenThenWebRespondForCommentOnArticle"; }
+    @Inject public WhenWebHandleNoTokenThenWebRespondForCommentOnArticle(ActionLog l) { super(l); }
+    @Override public String syncName() { return "whenWebHandleNoTokenThenWebRespondForCommentOnArticle"; }
     @Override public SyncTrigger trigger() { return new SyncTrigger(WEB_IRI, "handle", null); }
     @Override protected String whereClause() {
         return "?_when_1 :concept <%s> ; :name \"handle\" ; :flow ?_flow .\n<< ?_when_1 :outcome \"refused\" >> :flow ?_flow .\n?_req :concept <%s> ; :name \"request\" ; :flow ?_flow ; :input ?_inp .\n?_inp :route ?_route .".formatted(WEB_IRI, WEB_IRI);
