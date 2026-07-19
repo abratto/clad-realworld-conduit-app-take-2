@@ -15,14 +15,18 @@ public final class CommentConcept extends ConceptAgent {
 
     @Inject public CommentConcept(ActionLog l, CompletionBus b) { super(l, b); }
     @Override protected String conceptIRI() { return IRI; }
-    @Override public void pollAll() { pollAndProcess("add"); pollAndProcess("delete"); pollAndProcess("authorCheck"); }
+    @Override public void pollAll() { pollAndProcess("add"); pollAndProcess("delete"); pollAndProcess("authorCheck"); pollAndProcess("listByArticle"); }
 
     @Override protected void processInvocation(ActionRecord inv) {
         switch (inv.actionName()) {
             case "add" -> doAdd(inv); case "delete" -> doDelete(inv);
-            case "authorCheck" -> doAuthorCheck(inv);
+            case "authorCheck" -> doAuthorCheck(inv); case "listByArticle" -> doListByArticle(inv);
             default -> writeError(inv, "unknown");
         }
+    }
+
+    private void doListByArticle(ActionRecord inv) {
+        writeCompletion(inv, Map.of("outcome", ResourceFactory.createStringLiteral("Listed")));
     }
 
     private void doAdd(ActionRecord inv) {
