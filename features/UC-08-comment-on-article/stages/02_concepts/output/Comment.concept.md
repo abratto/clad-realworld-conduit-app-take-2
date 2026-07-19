@@ -23,3 +23,6 @@ authorCheck [ commentId: CommentId ; userId: UserId ] => [ IsAuthor | NotAuthor 
     no state change
     flow token: { action: "Comment.authorCheck", commentId, userId, outcome: "IsAuthor" }
 ```
+
+## Notes
+- Implemented in CommentConcept.java at com.conduit.app.concepts.comment.
