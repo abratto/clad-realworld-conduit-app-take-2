@@ -1,6 +1,5 @@
 package com.conduit.app.syncs;
 
-import com.conduit.app.concepts.user.UserConcept;
 import com.conduit.app.engine.ActionLog;
 import com.conduit.app.engine.FlowManager;
 import com.conduit.app.engine.SyncAgent;
@@ -12,37 +11,41 @@ import jakarta.inject.Singleton;
 @SyncMetadata(
         flow = "Register",
         step = 2,
-        triggeredBy = "User/register[refused] (blank field)",
+        triggeredBy = "Web/request[route=/api/users, refused]",
         fires = "Web/respond[422]")
 @Singleton
-public final class WhenUserRegisterRefusedByBlankFieldThenWebRespondForRegister extends SyncAgent {
+public final class WhenWebHandleBlankFieldsThenWebRespondForRegister extends SyncAgent {
 
     private static final String WEB_IRI = FlowManager.WEB_CONCEPT_IRI;
-    private static final String USER_IRI = UserConcept.IRI;
 
     @Inject
-    public WhenUserRegisterRefusedByBlankFieldThenWebRespondForRegister(ActionLog actionLog) {
+    public WhenWebHandleBlankFieldsThenWebRespondForRegister(ActionLog actionLog) {
         super(actionLog);
     }
 
     @Override
-    public String syncName() { return "whenUserRegisterRefusedByBlankFieldThenWebRespondForRegister"; }
+    public String syncName() { return "whenWebHandleBlankFieldsThenWebRespondForRegister"; }
 
     @Override
     public SyncTrigger trigger() {
-        return new SyncTrigger(USER_IRI, "register", null);
+        return new SyncTrigger(WEB_IRI, "request", null);
     }
 
     @Override
     protected String whereClause() {
         return """
             ?_when_1 :concept <%s> ;
-                     :name    "register" ;
-                     :flow    ?_flow ;
-                     :refusalReason ?_reason .
+                     :name    "request" ;
+                     :input   ?_inp ;
+                     :flow    ?_flow .
+            ?_inp :route ?_route .
             << ?_when_1 :outcome "refused" >> :flow ?_flow .
-            FILTER(CONTAINS(?_reason, "blank"))
-            """.formatted(USER_IRI);
+            """.formatted(WEB_IRI);
+    }
+
+    @Override
+    protected String parameterizeSparql(String sparql) {
+        return bindLiteral(sparql, "_route", "/api/users");
     }
 
     @Override
@@ -51,7 +54,7 @@ public final class WhenUserRegisterRefusedByBlankFieldThenWebRespondForRegister 
             ?_then_1 :concept <%s> ;
                      :name    "respond" ;
                      :input   [ :statusCode 422 ;
-                                :message "can't be blank" ] .
+                                :bodyType "error" ] .
             """.formatted(WEB_IRI);
     }
 }

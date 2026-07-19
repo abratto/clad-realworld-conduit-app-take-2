@@ -16,19 +16,19 @@ import jakarta.inject.Singleton;
         fires = "User/lookupByEmail",
         where = "route=login")
 @Singleton
-public final class WhenWebHandleRoutedThenUserLookupByEmailForLogin extends SyncAgent {
+public final class WhenWebHandleRoutedThenUserLookupByEmailForSignIn extends SyncAgent {
 
     private static final String WEB_IRI = FlowManager.WEB_CONCEPT_IRI;
     private static final String USER_IRI = UserConcept.IRI;
     private static final String LOGIN_ROUTE = "login";
 
     @Inject
-    public WhenWebHandleRoutedThenUserLookupByEmailForLogin(ActionLog actionLog) {
+    public WhenWebHandleRoutedThenUserLookupByEmailForSignIn(ActionLog actionLog) {
         super(actionLog);
     }
 
     @Override
-    public String syncName() { return "whenWebHandleRoutedThenUserLookupByEmailForLogin"; }
+    public String syncName() { return "whenWebHandleRoutedThenUserLookupByEmailForSignIn"; }
 
     @Override
     public SyncTrigger trigger() { return new SyncTrigger(WEB_IRI, "request", null); }

@@ -1,4 +1,4 @@
-sync WhenWebHandleRefusedNoTokenThenWebRespondForProfile
+sync WhenWebHandleNoTokenThenWebRespondForManageProfile
 
 ## Sync Contract Matrix
 

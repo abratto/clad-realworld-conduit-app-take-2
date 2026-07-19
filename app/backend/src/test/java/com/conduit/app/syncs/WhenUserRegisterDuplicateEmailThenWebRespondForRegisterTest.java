@@ -13,8 +13,8 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@DisplayName("WhenUserRegisterRefusedByDuplicateEmailThenWebRespondForRegister")
-class WhenUserRegisterRefusedByDuplicateEmailThenWebRespondForRegisterTest extends ConceptTestBase {
+@DisplayName("WhenUserRegisterDuplicateEmailThenWebRespondForRegister")
+class WhenUserRegisterDuplicateEmailThenWebRespondForRegisterTest extends ConceptTestBase {
 
     private static final String FLOW_TOKEN = RdfVocabulary.FLOW_TOKEN_PREFIX + "dup-email-reg-1";
     private static final String TRIGGER_IRI = RdfVocabulary.ACTION_NODE_PREFIX + "dup-email-trigger";
@@ -26,7 +26,7 @@ class WhenUserRegisterRefusedByDuplicateEmailThenWebRespondForRegisterTest exten
         @Test
         void shouldRespond409WhenDuplicateEmail() {
             writeCompletedTrigger();
-            var sync = new WhenUserRegisterRefusedByDuplicateEmailThenWebRespondForRegister(log);
+            var sync = new WhenUserRegisterDuplicateEmailThenWebRespondForRegister(log);
             sync.execute();
 
             var pending = findPendingInvocation(FlowManager.WEB_CONCEPT_IRI, "respond");

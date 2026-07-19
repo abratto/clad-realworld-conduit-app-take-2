@@ -1,4 +1,4 @@
-sync WhenSessionLookupFoundThenUserGetProfileForProfile
+sync WhenSessionLookupFoundThenUserGetProfileForManageProfile
 
 ## Sync Contract Matrix
 

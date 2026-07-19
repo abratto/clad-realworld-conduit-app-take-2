@@ -11,9 +11,9 @@ import jakarta.inject.Singleton;
 
 @SyncMetadata(flow = "Profile", step = 5, triggeredBy = "User/getProfile[FOUND]", fires = "Session/grant")
 @Singleton
-public final class WhenUserGetProfileFoundThenSessionGrantForProfile extends SyncAgent {
-    @Inject public WhenUserGetProfileFoundThenSessionGrantForProfile(ActionLog l) { super(l); }
-    @Override public String syncName() { return "whenUserGetProfileFoundThenSessionGrantForProfile"; }
+public final class WhenUserGetProfileFoundThenSessionGrantForManageProfile extends SyncAgent {
+    @Inject public WhenUserGetProfileFoundThenSessionGrantForManageProfile(ActionLog l) { super(l); }
+    @Override public String syncName() { return "whenUserGetProfileFoundThenSessionGrantForManageProfile"; }
     @Override public SyncTrigger trigger() { return new SyncTrigger(UserConcept.IRI, "getProfile", null); }
     @Override protected String whereClause() {
         return "?_when_1 :concept <%s> ; :name \"getProfile\" ; :flow ?_flow ; :userId ?_userId .\n<< ?_when_1 :outcome \"FOUND\" >> :flow ?_flow .".formatted(UserConcept.IRI);

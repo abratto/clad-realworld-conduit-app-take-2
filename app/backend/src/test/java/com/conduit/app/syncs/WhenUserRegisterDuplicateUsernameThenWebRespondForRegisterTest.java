@@ -1,6 +1,7 @@
 package com.conduit.app.syncs;
 
 import com.conduit.app.ConceptTestBase;
+import com.conduit.app.concepts.user.UserConcept;
 import com.conduit.app.engine.FlowManager;
 import com.conduit.app.engine.RdfVocabulary;
 import org.junit.jupiter.api.DisplayName;
@@ -12,27 +13,25 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@DisplayName("WhenWebHandleRefusedThenWebRespondForRegister")
-class WhenWebHandleRefusedThenWebRespondForRegisterTest extends ConceptTestBase {
+@DisplayName("WhenUserRegisterDuplicateUsernameThenWebRespondForRegister")
+class WhenUserRegisterDuplicateUsernameThenWebRespondForRegisterTest extends ConceptTestBase {
 
-    private static final String FLOW_TOKEN = RdfVocabulary.FLOW_TOKEN_PREFIX + "web-refused-reg-1";
-    private static final String TRIGGER_IRI = RdfVocabulary.ACTION_NODE_PREFIX + "web-refused-reg-trigger";
-    private static final String INPUT_IRI = TRIGGER_IRI + "/input";
+    private static final String FLOW_TOKEN = RdfVocabulary.FLOW_TOKEN_PREFIX + "dup-user-reg-1";
+    private static final String TRIGGER_IRI = RdfVocabulary.ACTION_NODE_PREFIX + "dup-user-trigger";
 
     @Nested
-    @DisplayName("WhenBlankField")
-    class WhenBlankField {
+    @DisplayName("WhenDuplicateUsername")
+    class WhenDuplicateUsername {
 
         @Test
-        void shouldRespond422WhenBlankField() {
+        void shouldRespond409WhenDuplicateUsername() {
             writeCompletedTrigger();
-            var sync = new WhenWebHandleRefusedThenWebRespondForRegister(log);
+            var sync = new WhenUserRegisterDuplicateUsernameThenWebRespondForRegister(log);
             sync.execute();
 
             var pending = findPendingInvocation(FlowManager.WEB_CONCEPT_IRI, "respond");
             assertNotNull(pending, "Web.respond should be scheduled");
-            assertTrue(pending.containsKey("statusCode"));
-            assertEquals("422", pending.get("statusCode"));
+            assertEquals("409", pending.get("statusCode"));
         }
     }
 
@@ -41,11 +40,10 @@ class WhenWebHandleRefusedThenWebRespondForRegisterTest extends ConceptTestBase 
             "PREFIX : <" + RdfVocabulary.ACTION_SCHEMA_IRI + ">\n" +
             "INSERT DATA {\n" +
             "  GRAPH <" + RdfVocabulary.ACTION_GRAPH_IRI + "> {\n" +
-            "    <" + TRIGGER_IRI + "> :concept <" + FlowManager.WEB_CONCEPT_IRI + "> ;\n" +
-            "                     :name    \"request\" ;\n" +
-            "                     :input   <" + INPUT_IRI + "> ;\n" +
-            "                     :flow    <" + FLOW_TOKEN + "> .\n" +
-            "    <" + INPUT_IRI + "> :route \"/api/users\" .\n" +
+            "    <" + TRIGGER_IRI + "> :concept <" + UserConcept.IRI + "> ;\n" +
+            "                     :name    \"register\" ;\n" +
+            "                     :flow    <" + FLOW_TOKEN + "> ;\n" +
+            "                     :refusalReason  \"username already taken: existing_user\" .\n" +
             "    << <" + TRIGGER_IRI + "> :outcome \"refused\" >> :flow <" + FLOW_TOKEN + "> .\n" +
             "  }\n" +
             "}\n");

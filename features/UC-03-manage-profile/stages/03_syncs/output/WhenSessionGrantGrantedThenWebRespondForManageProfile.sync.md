@@ -1,4 +1,4 @@
-sync WhenSessionGrantGrantedThenWebRespondForProfile
+sync WhenSessionGrantGrantedThenWebRespondForManageProfile
 
 ## Sync Contract Matrix
 
@@ -12,7 +12,7 @@ sync WhenSessionGrantGrantedThenWebRespondForProfile
 when { Session/grant: [ userId: ?userId ] => [ outcome: "Granted" ; token: ?token ] }
 where {
     A: bind (?token as ?token)
-    D: User/getProfile: { ?userId username: ?username ; email: ?email ; bio: ?bio ; image: ?image }
+    D: User: { ?userId username: ?username ; email: ?email ; bio: ?bio ; image: ?image }
     C: bind (200 as ?status)
 }
 then { Web/respond: [ status: ?status ; body: { user: { email: ?email, token: ?token, username: ?username, bio: ?bio, image: ?image } } ] }

@@ -10,38 +10,36 @@ import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 
 @SyncMetadata(
-        flow = "Register",
-        step = 6,
-        triggeredBy = "User/register[refused] (duplicate email)",
-        fires = "Web/respond[409]")
+        flow = "Login",
+        step = 2,
+        triggeredBy = "User/lookupByEmail[refused]",
+        fires = "Web/respond[401]")
 @Singleton
-public final class WhenUserRegisterRefusedByDuplicateEmailThenWebRespondForRegister extends SyncAgent {
+public final class WhenUserLookupByEmailRefusedThenWebRespondForSignIn extends SyncAgent {
 
     private static final String WEB_IRI = FlowManager.WEB_CONCEPT_IRI;
     private static final String USER_IRI = UserConcept.IRI;
 
     @Inject
-    public WhenUserRegisterRefusedByDuplicateEmailThenWebRespondForRegister(ActionLog actionLog) {
+    public WhenUserLookupByEmailRefusedThenWebRespondForSignIn(ActionLog actionLog) {
         super(actionLog);
     }
 
     @Override
-    public String syncName() { return "whenUserRegisterRefusedByDuplicateEmailThenWebRespondForRegister"; }
+    public String syncName() { return "whenUserLookupByEmailRefusedThenWebRespondForSignIn"; }
 
     @Override
     public SyncTrigger trigger() {
-        return new SyncTrigger(USER_IRI, "register", null);
+        return new SyncTrigger(USER_IRI, "lookupByEmail", null);
     }
 
     @Override
     protected String whereClause() {
         return """
             ?_when_1 :concept <%s> ;
-                     :name    "register" ;
-                     :flow    ?_flow ;
-                     :refusalReason ?_reason .
+                     :name    "lookupByEmail" ;
+                     :flow    ?_flow .
             << ?_when_1 :outcome "refused" >> :flow ?_flow .
-            FILTER(CONTAINS(?_reason, "email already taken"))
             """.formatted(USER_IRI);
     }
 
@@ -50,8 +48,7 @@ public final class WhenUserRegisterRefusedByDuplicateEmailThenWebRespondForRegis
         return """
             ?_then_1 :concept <%s> ;
                      :name    "respond" ;
-                     :input   [ :statusCode 409 ;
-                                :message "email has already been taken" ] .
+                     :input   [ :statusCode 401 ; :message "invalid credentials" ] .
             """.formatted(WEB_IRI);
     }
 }

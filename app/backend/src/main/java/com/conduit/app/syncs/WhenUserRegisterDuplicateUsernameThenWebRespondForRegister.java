@@ -15,18 +15,18 @@ import jakarta.inject.Singleton;
         triggeredBy = "User/register[refused] (duplicate username)",
         fires = "Web/respond[409]")
 @Singleton
-public final class WhenUserRegisterRefusedByDuplicateUsernameThenWebRespondForRegister extends SyncAgent {
+public final class WhenUserRegisterDuplicateUsernameThenWebRespondForRegister extends SyncAgent {
 
     private static final String WEB_IRI = FlowManager.WEB_CONCEPT_IRI;
     private static final String USER_IRI = UserConcept.IRI;
 
     @Inject
-    public WhenUserRegisterRefusedByDuplicateUsernameThenWebRespondForRegister(ActionLog actionLog) {
+    public WhenUserRegisterDuplicateUsernameThenWebRespondForRegister(ActionLog actionLog) {
         super(actionLog);
     }
 
     @Override
-    public String syncName() { return "whenUserRegisterRefusedByDuplicateUsernameThenWebRespondForRegister"; }
+    public String syncName() { return "whenUserRegisterDuplicateUsernameThenWebRespondForRegister"; }
 
     @Override
     public SyncTrigger trigger() {

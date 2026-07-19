@@ -1,4 +1,4 @@
-sync WhenWebHandleRoutedThenSessionLookupForProfile
+sync WhenWebHandleRoutedThenSessionLookupForManageProfile
 
 ## Sync Contract Matrix
 

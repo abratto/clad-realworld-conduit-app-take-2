@@ -4,7 +4,7 @@
 
 | Action | Flow (sync) | Data received | Pattern | Source |
 |---|---|---|---|---|
-| `lookupByEmail` | `WhenWebHandleRoutedThenUserLookupByEmailForLogin` (sign-in) | email | A | `Web.handle` body (`routed` token) |
+| `lookupByEmail` | `WhenWebHandleRoutedThenUserLookupByEmailForSignIn` (sign-in) | email | A | `Web.handle` body (`routed` token) |
 
 ## Section 2 — Named-region reads by others (inbound Pattern D)
 

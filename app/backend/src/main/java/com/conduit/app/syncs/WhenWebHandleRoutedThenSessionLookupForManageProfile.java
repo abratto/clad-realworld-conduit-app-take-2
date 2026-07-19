@@ -11,10 +11,10 @@ import jakarta.inject.Singleton;
 
 @SyncMetadata(flow = "Profile", step = 3, triggeredBy = "Web/handle[Routed]", fires = "Session/lookup")
 @Singleton
-public final class WhenWebHandleRoutedThenSessionLookupForProfile extends SyncAgent {
+public final class WhenWebHandleRoutedThenSessionLookupForManageProfile extends SyncAgent {
     private static final String WEB_IRI = FlowManager.WEB_CONCEPT_IRI;
-    @Inject public WhenWebHandleRoutedThenSessionLookupForProfile(ActionLog l) { super(l); }
-    @Override public String syncName() { return "whenWebHandleRoutedThenSessionLookupForProfile"; }
+    @Inject public WhenWebHandleRoutedThenSessionLookupForManageProfile(ActionLog l) { super(l); }
+    @Override public String syncName() { return "whenWebHandleRoutedThenSessionLookupForManageProfile"; }
     @Override public SyncTrigger trigger() { return new SyncTrigger(WEB_IRI, "handle", null); }
     @Override protected String whereClause() {
         return "?_when_1 :concept <%s> ; :name \"handle\" ; :input ?_inp ; :flow ?_flow .\n?_inp :token ?_token .".formatted(WEB_IRI);

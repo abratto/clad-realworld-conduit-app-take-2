@@ -4,5 +4,5 @@
 
 | Sync spec | When trigger | Then target | Test class | Source |
 |---|---|---|---|---|
-| `WhenSessionLookupFoundThenUserGetProfileForProfile` | `Session/lookup[FOUND]` | `User/getProfile` | `WhenSessionLookupFoundThenUserGetProfileForProfileTest` | Chain row 5 |
-| `WhenUserGetProfileFoundThenSessionGrantForProfile` | `User/getProfile[FOUND]` | `Session/grant` | `WhenUserGetProfileFoundThenSessionGrantForProfileTest` | Chain row 6 |
+| `WhenSessionLookupFoundThenUserGetProfileForManageProfile` | `Session/lookup[FOUND]` | `User/getProfile` | `WhenSessionLookupFoundThenUserGetProfileForManageProfileTest` | Chain row 5 |
+| `WhenUserGetProfileFoundThenSessionGrantForManageProfile` | `User/getProfile[FOUND]` | `Session/grant` | `WhenUserGetProfileFoundThenSessionGrantForManageProfileTest` | Chain row 6 |

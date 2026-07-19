@@ -11,10 +11,10 @@ import jakarta.inject.Singleton;
 
 @SyncMetadata(flow = "Profile", step = 6, triggeredBy = "Session/grant[Granted]", fires = "Web/respond[200]")
 @Singleton
-public final class WhenSessionGrantGrantedThenWebRespondForProfile extends SyncAgent {
+public final class WhenSessionGrantGrantedThenWebRespondForManageProfile extends SyncAgent {
     private static final String WEB_IRI = FlowManager.WEB_CONCEPT_IRI;
-    @Inject public WhenSessionGrantGrantedThenWebRespondForProfile(ActionLog l) { super(l); }
-    @Override public String syncName() { return "whenSessionGrantGrantedThenWebRespondForProfile"; }
+    @Inject public WhenSessionGrantGrantedThenWebRespondForManageProfile(ActionLog l) { super(l); }
+    @Override public String syncName() { return "whenSessionGrantGrantedThenWebRespondForManageProfile"; }
     @Override public SyncTrigger trigger() { return new SyncTrigger(SessionConcept.IRI, "grant", null); }
     @Override protected String whereClause() {
         return """

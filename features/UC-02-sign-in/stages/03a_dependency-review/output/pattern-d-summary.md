@@ -8,7 +8,7 @@
 | `WhenSessionGrantGrantedThenWebRespondForLogin` | `email` | `User` | `?userId` | sign-in |
 | `WhenSessionGrantGrantedThenWebRespondForLogin` | `bio` | `User` | `?userId` | sign-in |
 | `WhenSessionGrantGrantedThenWebRespondForLogin` | `image` | `User` | `?userId` | sign-in |
-| `WhenUserLookupByEmailFoundThenPasswordAuthCheckForLogin` | `password` | `Web` (request input) | `?flow` | sign-in |
+| `WhenUserLookupByEmailFoundThenPasswordAuthCheckForSignIn` | `password` | `Web` (request input) | `?flow` | sign-in |
 
 ## Cross-flow inconsistencies
 

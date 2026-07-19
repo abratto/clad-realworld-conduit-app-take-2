@@ -4,11 +4,11 @@
 
 | Sync spec | When trigger | Then target | Test class | Source |
 |---|---|---|---|---|
-| `WhenWebHandleRefusedThenWebRespondForRegister` | `Web.handle[refused: blankFields]` | `Web.respond[422]` | `WhenWebHandleRefusedThenWebRespondForRegisterTest` | Chain row 2 |
+| `WhenWebHandleBlankFieldsThenWebRespondForRegister` | `Web.handle[refused: blankFields]` | `Web.respond[422]` | `WhenWebHandleBlankFieldsThenWebRespondForRegisterTest` | Chain row 2 |
 | `WhenWebHandleRoutedThenUserRegisterForRegister` | `Web.handle[Routed]` | `User.register` | `WhenWebHandleRoutedThenUserRegisterForRegisterTest` | Chain row 3 |
 | `WhenUserRegisterRegisteredThenSessionGrantForRegister` | `User.register[Registered]` | `Session.grant` | `WhenUserRegisterRegisteredThenSessionGrantForRegisterTest` | Chain row 4 |
-| `WhenUserRegisterRefusedByDuplicateUsernameThenWebRespondForRegister` | `User.register[refused]` + dup username | `Web.respond[409]` | `WhenUserRegisterRefusedByDuplicateUsernameThenWebRespondForRegisterTest` | Chain row 5a |
-| `WhenUserRegisterRefusedByDuplicateEmailThenWebRespondForRegister` | `User.register[refused]` + dup email | `Web.respond[409]` | `WhenUserRegisterRefusedByDuplicateEmailThenWebRespondForRegisterTest` | Chain row 5b |
+| `WhenUserRegisterDuplicateUsernameThenWebRespondForRegister` | `User.register[refused]` + dup username | `Web.respond[409]` | `WhenUserRegisterDuplicateUsernameThenWebRespondForRegisterTest` | Chain row 5a |
+| `WhenUserRegisterDuplicateEmailThenWebRespondForRegister` | `User.register[refused]` + dup email | `Web.respond[409]` | `WhenUserRegisterDuplicateEmailThenWebRespondForRegisterTest` | Chain row 5b |
 | `WhenSessionGrantGrantedThenWebRespondForRegister` | `Session.grant[Granted]` | `Web.respond[201]` | `WhenSessionGrantGrantedThenWebRespondForRegisterTest` | Chain row 6 |
 
 ## Handoff bundle

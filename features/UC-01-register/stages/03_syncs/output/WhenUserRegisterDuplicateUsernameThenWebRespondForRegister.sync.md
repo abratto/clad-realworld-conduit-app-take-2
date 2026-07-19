@@ -1,16 +1,16 @@
-sync WhenUserRegisterRefusedByDuplicateUsernameThenWebRespondForRegister
+sync WhenUserRegisterDuplicateUsernameThenWebRespondForRegister
 
 ## Sync Contract Matrix
 
 | Source row | Target row | `when` signature | `then` signature | Allowed literals |
 |---|---|---|---|---|
-| 3 | 5 | `User/register: [ username: ?username ; email: ?_ ; password: ?_ ] => [ refused ]` | `Web/respond: [ status: 409 ; body: { errors: { username: ["has already been taken"] } } ]` | `409`, `"has already been taken"` |
+| 3 | 5 | `User/register: [ username: ?username ; email: ?_ ; password: ?_ ] => [ refused: "duplicateUsername" ]` | `Web/respond: [ status: 409 ; body: { errors: { username: ["has already been taken"] } } ]` | `409`, `"has already been taken"` |
 
 ## Rule
 
 ```
 when {
-    User/register: [ username: ?username ; email: ?_ ; password: ?_ ] => [ refused ]
+    User/register: [ username: ?username ; email: ?_ ; password: ?_ ] => [ refused: "duplicateUsername" ]
 }
 where {
     D: User: { ?userId username: ?username }
@@ -36,4 +36,4 @@ then {
 ## Notes
 
 - Fires when `User.register` refuses and the attempted username already exists in User state.
-- A sibling sync `WhenUserRegisterRefusedByDuplicateEmailThenWebRespondForRegister` handles the email case on the same trigger.
+- A sibling sync `WhenUserRegisterDuplicateEmailThenWebRespondForRegister` handles the email case on the same trigger.

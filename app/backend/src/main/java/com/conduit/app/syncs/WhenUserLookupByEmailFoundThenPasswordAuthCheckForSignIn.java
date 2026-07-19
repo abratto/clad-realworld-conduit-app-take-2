@@ -16,18 +16,18 @@ import jakarta.inject.Singleton;
         triggeredBy = "User/lookupByEmail[FOUND]",
         fires = "PasswordAuth/check")
 @Singleton
-public final class WhenUserLookupByEmailFoundThenPasswordAuthCheckForLogin extends SyncAgent {
+public final class WhenUserLookupByEmailFoundThenPasswordAuthCheckForSignIn extends SyncAgent {
 
     private static final String USER_IRI = UserConcept.IRI;
     private static final String PW_IRI = PasswordAuthConcept.IRI;
 
     @Inject
-    public WhenUserLookupByEmailFoundThenPasswordAuthCheckForLogin(ActionLog actionLog) {
+    public WhenUserLookupByEmailFoundThenPasswordAuthCheckForSignIn(ActionLog actionLog) {
         super(actionLog);
     }
 
     @Override
-    public String syncName() { return "whenUserLookupByEmailFoundThenPasswordAuthCheckForLogin"; }
+    public String syncName() { return "whenUserLookupByEmailFoundThenPasswordAuthCheckForSignIn"; }
 
     @Override
     public SyncTrigger trigger() {

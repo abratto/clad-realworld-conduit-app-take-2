@@ -1,4 +1,4 @@
-sync WhenUserLookupByEmailRefusedThenWebRespondForLogin
+sync WhenUserLookupByEmailRefusedThenWebRespondForSignIn
 
 ## Sync Contract Matrix
 

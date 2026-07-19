@@ -4,7 +4,7 @@
 
 | Action | Flow (sync) | Data received | Pattern | Source |
 |---|---|---|---|---|
-| `check` | `WhenUserLookupByEmailFoundThenPasswordAuthCheckForLogin` (sign-in) | userId, password | A + D | `userId` from trigger token, `password` from Web request input |
+| `check` | `WhenUserLookupByEmailFoundThenPasswordAuthCheckForSignIn` (sign-in) | userId, password | A + D | `userId` from trigger token, `password` from Web request input |
 
 ## Section 2 — Named-region reads by others (inbound Pattern D)
 

@@ -1,4 +1,4 @@
-sync WhenUserLookupByEmailFoundThenPasswordAuthCheckForLogin
+sync WhenUserLookupByEmailFoundThenPasswordAuthCheckForSignIn
 
 ## Sync Contract Matrix
 
@@ -14,7 +14,7 @@ when {
 }
 where {
     A: bind ( ?userId as ?userId )
-    D: Web/request: { ?flow :input [ :password ?password ] }
+    D: Web: { ?flow :input [ :password ?password ] }
 }
 then {
     PasswordAuth/check: [ userId: ?userId ; password: ?password ]

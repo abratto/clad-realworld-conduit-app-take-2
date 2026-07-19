@@ -10,8 +10,8 @@
 
 | Field | Read by (sync) | In flow | Pattern | Key |
 |---|---|---|---|---|
-| `username` | `WhenUserRegisterRefusedByDuplicateUsernameThenWebRespondForRegister` | `register-account` | D | `?username` from trigger |
-| `email` | `WhenUserRegisterRefusedByDuplicateEmailThenWebRespondForRegister` | `register-account` | D | `?email` from trigger |
+| `username` | `WhenUserRegisterDuplicateUsernameThenWebRespondForRegister` | `register-account` | D | `?username` from trigger |
+| `email` | `WhenUserRegisterDuplicateEmailThenWebRespondForRegister` | `register-account` | D | `?email` from trigger |
 | `username` | `WhenSessionGrantGrantedThenWebRespondForRegister` | `register-account` | D | `?userId` from trigger |
 | `email` | `WhenSessionGrantGrantedThenWebRespondForRegister` | `register-account` | D | `?userId` from trigger |
 

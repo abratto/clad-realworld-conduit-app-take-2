@@ -4,8 +4,8 @@
 
 | Consumer (sync) | Field read | Owner concept | Key | In flow |
 |---|---|---|---|---|
-| `WhenUserRegisterRefusedByDuplicateUsernameThenWebRespondForRegister` | `username` | `User` | `?username` (attempted) | `register-account` |
-| `WhenUserRegisterRefusedByDuplicateEmailThenWebRespondForRegister` | `email` | `User` | `?email` (attempted) | `register-account` |
+| `WhenUserRegisterDuplicateUsernameThenWebRespondForRegister` | `username` | `User` | `?username` (attempted) | `register-account` |
+| `WhenUserRegisterDuplicateEmailThenWebRespondForRegister` | `email` | `User` | `?email` (attempted) | `register-account` |
 | `WhenSessionGrantGrantedThenWebRespondForRegister` | `username` | `User` | `?userId` (from `Session.grant` outcome) | `register-account` |
 | `WhenSessionGrantGrantedThenWebRespondForRegister` | `email` | `User` | `?userId` (from `Session.grant` outcome) | `register-account` |
 

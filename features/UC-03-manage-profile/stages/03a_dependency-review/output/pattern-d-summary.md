@@ -4,7 +4,7 @@
 
 | Consumer (sync) | Field read | Owner concept | Key | In flow |
 |---|---|---|---|---|
-| `WhenSessionGrantGrantedThenWebRespondForProfile` | `username` | `User` | `?userId` | profile |
-| `WhenSessionGrantGrantedThenWebRespondForProfile` | `email` | `User` | `?userId` | profile |
-| `WhenSessionGrantGrantedThenWebRespondForProfile` | `bio` | `User` | `?userId` | profile |
-| `WhenSessionGrantGrantedThenWebRespondForProfile` | `image` | `User` | `?userId` | profile |
+| `WhenSessionGrantGrantedThenWebRespondForManageProfile` | `username` | `User` | `?userId` | profile |
+| `WhenSessionGrantGrantedThenWebRespondForManageProfile` | `email` | `User` | `?userId` | profile |
+| `WhenSessionGrantGrantedThenWebRespondForManageProfile` | `bio` | `User` | `?userId` | profile |
+| `WhenSessionGrantGrantedThenWebRespondForManageProfile` | `image` | `User` | `?userId` | profile |

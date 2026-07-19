@@ -15,7 +15,7 @@ when {
 where {
     A: bind ( ?token as ?token )
     A: bind ( ?userId as ?userId )
-    D: User/lookupByEmail: { ?userId username: ?username ; email: ?email ; bio: ?bio ; image: ?image }
+    D: User: { ?userId username: ?username ; email: ?email ; bio: ?bio ; image: ?image }
     C: bind ( 200 as ?status )
 }
 then {

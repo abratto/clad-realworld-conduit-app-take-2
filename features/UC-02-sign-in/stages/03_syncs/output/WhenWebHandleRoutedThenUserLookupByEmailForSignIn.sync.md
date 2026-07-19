@@ -1,4 +1,4 @@
-sync WhenWebHandleRoutedThenUserLookupByEmailForLogin
+sync WhenWebHandleRoutedThenUserLookupByEmailForSignIn
 
 ## Sync Contract Matrix
 

@@ -1,5 +1,6 @@
 package com.conduit.app.syncs;
 
+import com.conduit.app.concepts.user.UserConcept;
 import com.conduit.app.engine.ActionLog;
 import com.conduit.app.engine.FlowManager;
 import com.conduit.app.engine.SyncAgent;
@@ -11,41 +12,37 @@ import jakarta.inject.Singleton;
 @SyncMetadata(
         flow = "Register",
         step = 2,
-        triggeredBy = "Web/request[route=/api/users, refused]",
+        triggeredBy = "User/register[refused] (blank field)",
         fires = "Web/respond[422]")
 @Singleton
-public final class WhenWebHandleRefusedThenWebRespondForRegister extends SyncAgent {
+public final class WhenUserRegisterBlankFieldsThenWebRespondForRegister extends SyncAgent {
 
     private static final String WEB_IRI = FlowManager.WEB_CONCEPT_IRI;
+    private static final String USER_IRI = UserConcept.IRI;
 
     @Inject
-    public WhenWebHandleRefusedThenWebRespondForRegister(ActionLog actionLog) {
+    public WhenUserRegisterBlankFieldsThenWebRespondForRegister(ActionLog actionLog) {
         super(actionLog);
     }
 
     @Override
-    public String syncName() { return "whenWebHandleRefusedThenWebRespondForRegister"; }
+    public String syncName() { return "whenUserRegisterBlankFieldsThenWebRespondForRegister"; }
 
     @Override
     public SyncTrigger trigger() {
-        return new SyncTrigger(WEB_IRI, "request", null);
+        return new SyncTrigger(USER_IRI, "register", null);
     }
 
     @Override
     protected String whereClause() {
         return """
             ?_when_1 :concept <%s> ;
-                     :name    "request" ;
-                     :input   ?_inp ;
-                     :flow    ?_flow .
-            ?_inp :route ?_route .
+                     :name    "register" ;
+                     :flow    ?_flow ;
+                     :refusalReason ?_reason .
             << ?_when_1 :outcome "refused" >> :flow ?_flow .
-            """.formatted(WEB_IRI);
-    }
-
-    @Override
-    protected String parameterizeSparql(String sparql) {
-        return bindLiteral(sparql, "_route", "/api/users");
+            FILTER(CONTAINS(?_reason, "blank"))
+            """.formatted(USER_IRI);
     }
 
     @Override
@@ -54,7 +51,7 @@ public final class WhenWebHandleRefusedThenWebRespondForRegister extends SyncAge
             ?_then_1 :concept <%s> ;
                      :name    "respond" ;
                      :input   [ :statusCode 422 ;
-                                :bodyType "error" ] .
+                                :message "can't be blank" ] .
             """.formatted(WEB_IRI);
     }
 }

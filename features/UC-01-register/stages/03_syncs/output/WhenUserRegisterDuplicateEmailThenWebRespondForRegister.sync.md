@@ -1,16 +1,16 @@
-sync WhenUserRegisterRefusedByDuplicateEmailThenWebRespondForRegister
+sync WhenUserRegisterDuplicateEmailThenWebRespondForRegister
 
 ## Sync Contract Matrix
 
 | Source row | Target row | `when` signature | `then` signature | Allowed literals |
 |---|---|---|---|---|
-| 3 | 5 | `User/register: [ username: ?_ ; email: ?email ; password: ?_ ] => [ refused ]` | `Web/respond: [ status: 409 ; body: { errors: { email: ["has already been taken"] } } ]` | `409`, `"has already been taken"` |
+| 3 | 5 | `User/register: [ username: ?_ ; email: ?email ; password: ?_ ] => [ refused: "duplicateEmail" ]` | `Web/respond: [ status: 409 ; body: { errors: { email: ["has already been taken"] } } ]` | `409`, `"has already been taken"` |
 
 ## Rule
 
 ```
 when {
-    User/register: [ username: ?_ ; email: ?email ; password: ?_ ] => [ refused ]
+    User/register: [ username: ?_ ; email: ?email ; password: ?_ ] => [ refused: "duplicateEmail" ]
 }
 where {
     D: User: { ?userId email: ?email }

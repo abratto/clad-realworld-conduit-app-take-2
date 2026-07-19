@@ -1,4 +1,4 @@
-sync WhenWebHandleRefusedThenWebRespondForLogin
+sync WhenWebHandleBlankFieldsThenWebRespondForRegister
 
 ## Sync Contract Matrix
 
@@ -21,7 +21,7 @@ then {
 }
 ```
 
-## Where clause patterns
+## Where clause patterns (for Stage 03a audit)
 
 | Binding | Pattern | Source |
 |---|---|---|
@@ -30,4 +30,8 @@ then {
 
 ## Cites
 
-- `../01_usecase/output/usecase.md` — scenario "sign-in", extension 2a
+- `../01_usecase/output/usecase.md` — scenario "register-account", extension 2a
+
+## Notes
+
+- The specific blank field name (`username`, `email`, or `password`) is determined by the `Web.handle` action's refusal detail, which identifies which field was empty. The error envelope uses the field name from the refusal.
