@@ -26,7 +26,8 @@
 | 11 | Conduit backend — favorites | UC-10-favorite-article | done | Favorite/unfavorite articles |
 | 12 | Conduit backend — follow | UC-11-follow-user | done | Follow/unfollow members |
 | 13 | Conduit backend — feed | UC-12-view-feed | done | View feed from followed users |
-| 14 | Conduit backend — tags | UC-13-list-tags | next | List all tags |
+| 14 | Conduit backend — tags | UC-13-list-tags | done | List all tags |
+| | **All 13 use cases complete** | | **✅** | Full Conduit backend |
 
 ## Backlog
 
