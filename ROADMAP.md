@@ -22,7 +22,8 @@
 | 7 | Conduit backend — browse | UC-06-browse-articles | done | Browse articles with pagination |
 | 8 | Conduit backend — reading | UC-07-read-article | done | Read article by slug |
 | 9 | Conduit backend — comments | UC-08-comment-on-article | done | Add/delete comments |
-| 10 | Conduit backend — comments view | UC-09-view-comments | next | View article comments |
+| 10 | Conduit backend — comments view | UC-09-view-comments | done | View article comments |
+| 11 | Conduit backend — favorites | UC-10-favorite-article | next | Favorite/unfavorite articles |
 
 ## Backlog
 
