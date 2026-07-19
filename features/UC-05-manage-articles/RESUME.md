@@ -2,31 +2,23 @@
 
 ## Live working memory (update each turn)
 
-- **Feature:** `TBD`
-- **Branch:** `TBD`
-- **Current stage:** `TBD`
-- **Current stage status:** `TBD` <!-- in progress | blocked | ready for gate -->
-- **Current blocker:** `TBD`
-- **Current failing command:** `TBD`
-- **Error snippet (<=20 lines):** `TBD`
-- **Files touched this turn:** `TBD`
-- **Next 1-3 steps:** `TBD`
-- **Next file to open:** `TBD`
+- **Feature:** `UC-05-manage-articles`
+- **Branch:** `feat/UC-05-manage-articles`
+- **Current stage:** `02b_chain-table`
+- **Current stage status:** `pending`
+- **Current blocker:** `none`
+- **Current failing command:** `none`
+- **Next 1-3 steps:** Write chain table for create/update/delete scenarios → present Gate 1
+- **Next file to open:** `features/UC-05-manage-articles/stages/02b_chain-table/CONTEXT.md`
 
-## Gate snapshot (must be current before commit)
+## Gate snapshot
 
-<!--
-  The agent updates this section after EVERY human gate approval.
-  Stages 02 and 04a run verify_gate_approval.py before starting — if the
-  required gate is not approved, the script stops the pipeline.
-  The agent must NOT skip updating this section after each gate approval.
--->
-- **Gate 1 (Requirements):** `pending` | `approved` | `rejected`
-- **Gate 2 (Architecture):** `pending` | `approved` | `rejected`
-- **Gate 3 (Executable spec):** `pending` | `approved` | `rejected`
-- **Last completed stage:** `TBD`
-- **Corrections at last gate:** `TBD`
-- **Deferred concepts:** `TBD`
-- **Next stage:** `TBD`
-- **Next task:** `TBD`
-- **Notes:** `TBD`
+- **Gate 1 (Requirements):** `pending`
+- **Gate 2 (Architecture):** `pending`
+- **Gate 3 (Executable spec):** `pending`
+- **Last completed stage:** `02a_responsibility-map`
+- **Corrections at last gate:** `none`
+- **Deferred concepts:** `none`
+- **Next stage:** `02b_chain-table`
+- **Next task:** Write chain table for create-article, update-article, delete-article scenarios
+- **Notes:** Session started 2026-07-18. Completed UCs 01–04. Starting UC-05 manage-articles.
