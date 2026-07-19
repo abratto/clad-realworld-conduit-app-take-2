@@ -23,7 +23,7 @@
 -->
 - **Gate 1 (Requirements):** `approved` | `approved` | `rejected`
 - **Gate 2 (Architecture):** `approved` | `approved` | `rejected`
-- **Gate 3 (Executable spec):** `pending` | `approved` | `rejected`
+- **Gate 3 (Executable spec):** `approved` | `approved` | `rejected`
 - **Last completed stage:** `TBD`
 - **Corrections at last gate:** `TBD`
 - **Deferred concepts:** `TBD`

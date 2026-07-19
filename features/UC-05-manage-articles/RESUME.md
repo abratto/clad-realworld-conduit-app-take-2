@@ -15,7 +15,7 @@
 
 - **Gate 1 (Requirements):** `approved`
 - **Gate 2 (Architecture):** `approved`
-- **Gate 3 (Executable spec):** `pending`
+- **Gate 3 (Executable spec):** `approved`
 - **Last completed stage:** `02a_responsibility-map`
 - **Corrections at last gate:** `none`
 - **Deferred concepts:** `none`
