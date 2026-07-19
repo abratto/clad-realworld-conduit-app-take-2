@@ -14,7 +14,7 @@
 ## Gate snapshot
 
 - **Gate 1 (Requirements):** `approved`
-- **Gate 2 (Architecture):** `pending`
+- **Gate 2 (Architecture):** `approved`
 - **Gate 3 (Executable spec):** `pending`
 - **Last completed stage:** `02a_responsibility-map`
 - **Corrections at last gate:** `none`
