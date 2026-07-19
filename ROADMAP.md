@@ -23,7 +23,10 @@
 | 8 | Conduit backend — reading | UC-07-read-article | done | Read article by slug |
 | 9 | Conduit backend — comments | UC-08-comment-on-article | done | Add/delete comments |
 | 10 | Conduit backend — comments view | UC-09-view-comments | done | View article comments |
-| 11 | Conduit backend — favorites | UC-10-favorite-article | next | Favorite/unfavorite articles |
+| 11 | Conduit backend — favorites | UC-10-favorite-article | done | Favorite/unfavorite articles |
+| 12 | Conduit backend — follow | UC-11-follow-user | next | Follow/unfollow members |
+| 13 | Conduit backend — feed | UC-12-view-feed | next | View feed from followed users |
+| 14 | Conduit backend — tags | UC-13-list-tags | next | List all tags |
 
 ## Backlog
 
