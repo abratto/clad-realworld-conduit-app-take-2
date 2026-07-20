@@ -1,5 +1,6 @@
 sync WhenSessionLookupFoundThenFollowGetFollowedUsersForViewFeed
-## Sync Contract Matrix
+| Source row | Target row | `when` signature | `then` signature | Allowed literals |
+|---|---|---|---|---|
 | 3 | 5 | `Session/lookup: [ token: ?_ ] => [ outcome: "FOUND" ; userId: ?uid ]` | `Follow/getFollowedUsers: [ userId: ?uid ]` | none |
 ## Rule
 ```

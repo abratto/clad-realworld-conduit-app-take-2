@@ -1,5 +1,6 @@
 sync WhenWebHandleRoutedThenArticleListForBrowseArticles
-## Sync Contract Matrix
+| Source row | Target row | `when` signature | `then` signature | Allowed literals |
+|---|---|---|---|---|
 | 1 | 2 | `Web/handle: [ route ; body ] => [ routed: ?filters, ?token? ]` | `Article/list: [ tag: ?tag ; author: ?author ; favorited: ?fav ; limit: ?limit ; offset: ?offset ]` | none |
 ## Rule
 ```

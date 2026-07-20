@@ -1,3 +1,8 @@
+## Sync Contract Matrix
+
+| Source row | Target row | `when` signature | `then` signature | Allowed literals |
+|---|---|---|---|---|
+
 sync WhenFollowFollowFollowedThenWebRespondForFollowUser
 ## Rule
 ```

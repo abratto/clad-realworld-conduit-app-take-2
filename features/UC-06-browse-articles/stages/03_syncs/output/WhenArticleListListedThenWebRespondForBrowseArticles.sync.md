@@ -1,5 +1,6 @@
 sync WhenArticleListListedThenWebRespondForBrowseArticles
-## Sync Contract Matrix
+| Source row | Target row | `when` signature | `then` signature | Allowed literals |
+|---|---|---|---|---|
 | 2 | 4 | `Article/list: [ limit: ?limit ; offset: ?offset ] => [ outcome: "Listed" ; articles: ?articles ; count: ?count ]` | `Web/respond: [ status: 200 ; body: { articles: ?articles, articlesCount: ?count } ]` | `200` |
 ## Rule
 ```

@@ -1,5 +1,6 @@
 sync WhenArticleGetBySlugRefusedThenWebRespondForReadArticle
-## Sync Contract Matrix
+| Source row | Target row | `when` signature | `then` signature | Allowed literals |
+|---|---|---|---|---|
 | 2 | 3 | `Article/getBySlug: [ slug: ?slug ] => [ refused ]` | `Web/respond: [ status: 404 ; body: { errors: { article: ["not found"] } } ]` | `404` |
 ## Rule
 ```

@@ -1,5 +1,6 @@
 sync WhenArticleListByAuthorsListedThenWebRespondForViewFeed
-## Sync Contract Matrix
+| Source row | Target row | `when` signature | `then` signature | Allowed literals |
+|---|---|---|---|---|
 | 6 | 7 | `Article/listByAuthors: [ authorIds: ?_ ; limit: ?_ ; offset: ?_ ] => [ outcome: "Listed" ; articles: ?art ; count: ?cnt ]` | `Web/respond: [ status: 200 ; body: { articles: ?art, articlesCount: ?cnt } ]` | `200` |
 ## Rule
 ```

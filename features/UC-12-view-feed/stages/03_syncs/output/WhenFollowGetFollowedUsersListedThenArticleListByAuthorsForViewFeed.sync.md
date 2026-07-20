@@ -1,5 +1,6 @@
 sync WhenFollowGetFollowedUsersListedThenArticleListByAuthorsForViewFeed
-## Sync Contract Matrix
+| Source row | Target row | `when` signature | `then` signature | Allowed literals |
+|---|---|---|---|---|
 | 5 | 6 | `Follow/getFollowedUsers: [ userId: ?uid ] => [ outcome: "Listed" ; followeeIds: ?ids ]` | `Article/listByAuthors: [ authorIds: ?ids ; limit: ?limit ; offset: ?offset ]` | none |
 ## Rule
 ```

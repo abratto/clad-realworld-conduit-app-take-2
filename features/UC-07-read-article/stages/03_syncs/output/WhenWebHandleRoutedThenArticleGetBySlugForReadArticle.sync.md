@@ -1,5 +1,6 @@
 sync WhenWebHandleRoutedThenArticleGetBySlugForReadArticle
-## Sync Contract Matrix
+| Source row | Target row | `when` signature | `then` signature | Allowed literals |
+|---|---|---|---|---|
 | 1 | 2 | `Web/handle: [ route ; body ] => [ routed: ?slug ]` | `Article/getBySlug: [ slug: ?slug ]` | none |
 ## Rule
 ```
