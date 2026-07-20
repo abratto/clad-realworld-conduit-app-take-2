@@ -12,7 +12,7 @@ import jakarta.inject.Singleton;
 @SyncMetadata(
         flow = "Register",
         step = 3,
-        triggeredBy = "Web/request[route=/api/users]",
+        triggeredBy = "Web/handle[Routed]",
         fires = "User/register")
 @Singleton
 public final class WhenWebHandleRoutedThenUserRegisterForRegister extends SyncAgent {
@@ -30,21 +30,25 @@ public final class WhenWebHandleRoutedThenUserRegisterForRegister extends SyncAg
 
     @Override
     public SyncTrigger trigger() {
-        return new SyncTrigger(WEB_IRI, "request", null);
+        return new SyncTrigger(WEB_IRI, "handle", null);
     }
 
     @Override
     protected String whereClause() {
         return """
             ?_when_1 :concept <%s> ;
-                     :name    "request" ;
-                     :input   ?_inp ;
+                     :name    "handle" ;
+                     :input   ?_handle_inp ;
                      :flow    ?_flow .
-            ?_inp :route    ?_route ;
-                  :username ?_username ;
-                  :email    ?_email ;
-                  :password ?_password .
-            """.formatted(WEB_IRI);
+            ?_handle_inp :username ?_username ;
+                         :email    ?_email ;
+                         :password ?_password .
+            ?_req :concept <%s> ;
+                  :name    "request" ;
+                  :flow    ?_flow ;
+                  :input   ?_req_inp .
+            ?_req_inp :route ?_route .
+            """.formatted(WEB_IRI, WEB_IRI);
     }
 
     @Override

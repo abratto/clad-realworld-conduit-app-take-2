@@ -1,6 +1,7 @@
 package com.conduit.app.syncs;
 
 import com.conduit.app.concepts.session.SessionConcept;
+import com.conduit.app.concepts.user.UserConcept;
 import com.conduit.app.engine.ActionLog;
 import com.conduit.app.engine.FlowManager;
 import com.conduit.app.engine.SyncAgent;
@@ -46,7 +47,12 @@ public final class WhenSessionGrantGrantedThenWebRespondForLogin extends SyncAge
                       :flow    ?_flow ;
                       :input   ?_web_inp .
             ?_web_inp :route ?_route .
-            """.formatted(SESSION_IRI, WEB_IRI);
+            OPTIONAL { ?_web_inp :email ?_email . }
+            OPTIONAL { ?_web_inp :username ?_username_from_req . }
+            OPTIONAL { ?_lookup_action :concept <%s> ; :name "lookupByEmail" ; :flow ?_flow ; :username ?_username . << ?_lookup_action :outcome "FOUND" >> :flow ?_flow . }
+            OPTIONAL { ?_lookup_user :concept <%s> ; :name "lookupByUsername" ; :flow ?_flow ; :username ?_username . << ?_lookup_user :outcome "FOUND" >> :flow ?_flow . }
+            BIND(COALESCE(?_username, ?_username_from_req, "") AS ?_un)
+            """.formatted(SESSION_IRI, WEB_IRI, UserConcept.IRI, UserConcept.IRI);
     }
 
     @Override
@@ -54,7 +60,7 @@ public final class WhenSessionGrantGrantedThenWebRespondForLogin extends SyncAge
         return """
             ?_then_1 :concept <%s> ;
                      :name    "respond" ;
-                     :input   [ :statusCode 200 ; :token ?_token ; :sessionToken ?_token ] .
+                     :input   [ :statusCode 200 ; :token ?_token ; :sessionToken ?_token ; :email ?_email ; :username ?_un ] .
             """.formatted(WEB_IRI);
     }
 

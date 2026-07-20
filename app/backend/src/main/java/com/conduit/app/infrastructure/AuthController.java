@@ -59,7 +59,7 @@ public class AuthController {
                             responseAssembler.assemble(flowName, fields));
                 } else {
                     result = io.micronaut.http.HttpResponse.status(resp.getStatus())
-                            .body(responseAssembler.toError(fields));
+                            .body(java.util.Map.of("errors", java.util.Map.of("credentials", java.util.List.of("invalid"))));
                 }
                 String flowToken = resp.getHeaders().get("X-Flow-Token");
                 if (flowToken != null) result.header("X-Flow-Token", flowToken);
@@ -82,21 +82,36 @@ public class AuthController {
     public Mono<HttpResponse<?>> login(@Body LoginRequest body) {
         ActionRecord root = flowManager.rootAction("login", Map.of(
                 "username", body.username() == null ? "" : body.username(),
-                "email", body.email() == null ? "" : body.email(),
                 "password", body.password() == null ? "" : body.password()
         ));
-        return assemble("login", syncDispatcher.awaitResponse(root.flowToken()));
+        return syncDispatcher.awaitResponse(root.flowToken());
     }
 
+    @SuppressWarnings("unchecked")
     @Post(value = "/users/login", consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
     @Operation(summary = "Sign in with email and password (Conduit spec)")
-    public Mono<HttpResponse<?>> loginByEmail(@Body RegisterRequest body) {
-        String email = body.user() != null ? body.user().email() : "";
-        String password = body.user() != null ? body.user().password() : "";
-        ActionRecord root = flowManager.rootAction("signin", Map.of(
+    public Mono<HttpResponse<?>> loginByEmail(@Body Map<String, Object> body) {
+        String email = "";
+        String password = "";
+        if (body.containsKey("user") && body.get("user") instanceof Map) {
+            Map<String, Object> user = (Map<String, Object>) body.get("user");
+            if (user.containsKey("email")) email = user.get("email").toString();
+            if (user.containsKey("password")) password = user.get("password").toString();
+        }
+        if (email.isEmpty()) {
+            return Mono.just(HttpResponse.status(HttpStatus.UNPROCESSABLE_ENTITY)
+                .body("{\"errors\":{\"email\":[\"can't be blank\"]}}")
+                .contentType(MediaType.APPLICATION_JSON));
+        }
+        if (password.isEmpty()) {
+            return Mono.just(HttpResponse.status(HttpStatus.UNPROCESSABLE_ENTITY)
+                .body("{\"errors\":{\"password\":[\"can't be blank\"]}}")
+                .contentType(MediaType.APPLICATION_JSON));
+        }
+        ActionRecord root = flowManager.rootAction("login", Map.of(
                 "email", email,
                 "password", password
         ));
-        return assemble("signin", syncDispatcher.awaitResponse(root.flowToken()));
+        return assemble("login", syncDispatcher.awaitResponse(root.flowToken()));
     }
 }

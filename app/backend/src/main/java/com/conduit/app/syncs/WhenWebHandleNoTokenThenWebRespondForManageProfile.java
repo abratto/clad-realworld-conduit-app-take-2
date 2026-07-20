@@ -12,13 +12,17 @@ import jakarta.inject.Singleton;
 @Singleton
 public final class WhenWebHandleNoTokenThenWebRespondForManageProfile extends SyncAgent {
     private static final String WEB_IRI = FlowManager.WEB_CONCEPT_IRI;
+    private static final String PROFILE_ROUTE = "profile";
     @Inject public WhenWebHandleNoTokenThenWebRespondForManageProfile(ActionLog l) { super(l); }
     @Override public String syncName() { return "whenWebHandleNoTokenThenWebRespondForManageProfile"; }
     @Override public SyncTrigger trigger() { return new SyncTrigger(WEB_IRI, "handle", null); }
     @Override protected String whereClause() {
-        return "?_when_1 :concept <%s> ; :name \"handle\" ; :flow ?_flow .\n<< ?_when_1 :outcome \"refused\" >> :flow ?_flow .".formatted(WEB_IRI);
+        return "?_when_1 :concept <%s> ; :name \"handle\" ; :flow ?_flow .\n<< ?_when_1 :outcome \"refused\" >> :flow ?_flow .\n?_req :concept <%s> ; :name \"request\" ; :flow ?_flow ; :input ?_req_inp .\n?_req_inp :route ?_route .".formatted(WEB_IRI, WEB_IRI);
     }
     @Override protected String thenBindings() {
         return "?_then_1 :concept <%s> ; :name \"respond\" ; :input [ :statusCode 401 ; :message \"token is missing\" ] .".formatted(WEB_IRI);
+    }
+    @Override protected String parameterizeSparql(String sparql) {
+        return bindLiteral(sparql, "_route", PROFILE_ROUTE);
     }
 }

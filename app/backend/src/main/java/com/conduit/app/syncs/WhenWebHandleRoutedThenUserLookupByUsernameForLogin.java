@@ -12,13 +12,13 @@ import jakarta.inject.Singleton;
 /**
  * Sync: WhenWebHandleRoutedThenUserLookupByUsernameForLogin
  *
- * <p>When: {@code Web/request[route=login]}
+ * <p>When: {@code Web/handle[Routed]}
  * <p>Then: {@code User/lookupByUsername { username }}
  */
 @SyncMetadata(
         flow = "Login",
         step = 1,
-        triggeredBy = "Web/request[route=login]",
+        triggeredBy = "Web/handle[Routed]",
         fires = "User/lookupByUsername",
         where = "route=login")
 @Singleton
@@ -36,18 +36,22 @@ public final class WhenWebHandleRoutedThenUserLookupByUsernameForLogin extends S
     public String syncName() { return "whenWebHandleRoutedThenUserLookupByUsernameForLogin"; }
 
     @Override
-    public SyncTrigger trigger() { return new SyncTrigger(WEB_IRI, "request", null); }
+    public SyncTrigger trigger() { return new SyncTrigger(WEB_IRI, "handle", null); }
 
     @Override
     protected String whereClause() {
         return """
             ?_when_1 :concept <%s> ;
-                     :name    "request" ;
-                     :input   ?_web_inp ;
+                     :name    "handle" ;
+                     :input   ?_handle_inp ;
                      :flow    ?_flow .
-            ?_web_inp :route    ?_route ;
-                      :username ?_username .
-            """.formatted(WEB_IRI);
+            ?_handle_inp :username ?_username .
+            ?_req :concept <%s> ;
+                  :name    "request" ;
+                  :flow    ?_flow ;
+                  :input   ?_req_inp .
+            ?_req_inp :route ?_route .
+            """.formatted(WEB_IRI, WEB_IRI);
     }
 
     @Override

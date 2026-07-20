@@ -19,10 +19,10 @@ public final class WhenSessionLookupFoundThenCommentAddForCommentOnArticle exten
     @Override public String syncName() { return "whenSessionLookupFoundThenCommentAddForCommentOnArticle"; }
     @Override public SyncTrigger trigger() { return new SyncTrigger(SessionConcept.IRI, "lookup", null); }
     @Override protected String whereClause() {
-        return "?_when_1 :concept <%s> ; :name \"lookup\" ; :flow ?_flow ; :userId ?_userId .\n<< ?_when_1 :outcome \"FOUND\" >> :flow ?_flow .\n?_req :concept <%s> ; :name \"request\" ; :flow ?_flow ; :input ?_inp .\n?_inp :route ?_route ; :body ?_body .".formatted(SessionConcept.IRI, WEB_IRI);
+        return "?_when_1 :concept <%s> ; :name \"lookup\" ; :flow ?_flow ; :userId ?_userId .\n<< ?_when_1 :outcome \"FOUND\" >> :flow ?_flow .\n?_req :concept <%s> ; :name \"request\" ; :flow ?_flow ; :input ?_inp .\n?_inp :route ?_route ; :body ?_body ; :slug ?_slug .\nFILTER NOT EXISTS { ?_any_add :name \"add\" ; :flow ?_flow }".formatted(SessionConcept.IRI, WEB_IRI);
     }
     @Override protected String thenBindings() {
-        return "?_then_1 :concept <%s> ; :name \"add\" ; :input [ :body ?_body ] .".formatted(COMMENT_IRI);
+        return "?_then_1 :concept <%s> ; :name \"add\" ; :input [ :body ?_body ; :articleId ?_slug ; :authorId ?_userId ] .".formatted(COMMENT_IRI);
     }
     @Override protected String parameterizeSparql(String sparql) {
         return bindLiteral(sparql, "_route", COMMENT_ROUTE);

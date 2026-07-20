@@ -20,6 +20,6 @@ public final class WhenCommentAuthorCheckIsAuthorThenCommentDeleteForCommentOnAr
         return "?_when_1 :concept <%s> ; :name \"authorCheck\" ; :flow ?_flow ; :input ?_ac_inp .\n?_ac_inp :commentId ?_commentId .\n<< ?_when_1 :outcome \"IsAuthor\" >> :flow ?_flow .\n?_req :concept <%s> ; :name \"request\" ; :flow ?_flow ; :input ?_inp .\n?_inp :slug ?_slug .".formatted(COMMENT_IRI, WEB_IRI);
     }
     @Override protected String thenBindings() {
-        return "?_then_1 :concept <%s> ; :name \"delete\" ; :input [ :commentId ?_commentId ] .".formatted(COMMENT_IRI);
+        return "?_then_1 :concept <%s> ; :name \"delete\" ; :input [ :commentId ?_commentId ; :slug ?_slug ] .".formatted(COMMENT_IRI);
     }
 }

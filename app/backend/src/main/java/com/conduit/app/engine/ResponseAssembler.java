@@ -17,11 +17,14 @@ public class ResponseAssembler {
                 if (token == null) token = fields.get("sessionToken");
                 String username = fields.get("username");
                 String email = fields.get("email");
-                if (username != null && email != null) {
+                if (token != null) {
                     yield new RegisterSuccessResponse(
                         new RegisterSuccessResponse.RegisteredUser(
-                            email, token, username,
-                            fields.get("bio"), fields.get("image")));
+                            email != null ? email : "",
+                            token,
+                            username != null ? username : "",
+                            nullIfNull(fields.get("bio")),
+                            nullIfNull(fields.get("image"))));
                 }
                 yield new LoginSuccessResponse(token);
             }
@@ -30,10 +33,14 @@ public class ResponseAssembler {
                             fields.get("email"),
                             fields.get("token"),
                             fields.get("username"),
-                            fields.get("bio"),
-                            fields.get("image")));
+                            nullIfNull(fields.get("bio")),
+                            nullIfNull(fields.get("image"))));
             default -> fields;
         };
+    }
+
+    private static String nullIfNull(String value) {
+        return value == null || value.equals("null") ? null : value;
     }
 
     public LoginFailureResponse toError(Map<String, String> fields) {

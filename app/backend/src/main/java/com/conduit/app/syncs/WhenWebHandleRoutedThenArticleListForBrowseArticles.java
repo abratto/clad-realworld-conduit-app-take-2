@@ -5,13 +5,17 @@ import jakarta.inject.*;
 @Singleton
 public final class WhenWebHandleRoutedThenArticleListForBrowseArticles extends SyncAgent {
     private static final String WEB_IRI = FlowManager.WEB_CONCEPT_IRI;
+    private static final String ARTICLES_ROUTE = "/api/articles";
     @Inject public WhenWebHandleRoutedThenArticleListForBrowseArticles(ActionLog l) { super(l); }
     @Override public String syncName() { return "whenWebHandleRoutedThenArticleListForBrowseArticles"; }
     @Override public SyncTrigger trigger() { return new SyncTrigger(WEB_IRI, "handle", null); }
     @Override protected String whereClause() {
-        return "?_when_1 :concept <%s> ; :name \"handle\" ; :input ?_inp ; :flow ?_flow .\n?_inp :limit ?_limit ; :offset ?_offset .".formatted(WEB_IRI);
+        return "?_when_1 :concept <%s> ; :name \"handle\" ; :input ?_handle_inp ; :flow ?_flow .\n?_handle_inp :limit ?_limit ; :offset ?_offset .\n?_req :concept <%s> ; :name \"request\" ; :flow ?_flow ; :input ?_req_inp .\n?_req_inp :route ?_route .".formatted(WEB_IRI, WEB_IRI);
     }
     @Override protected String thenBindings() {
         return "?_then_1 :concept <%s> ; :name \"list\" ; :input [ :limit ?_limit ; :offset ?_offset ] .".formatted(ArticleConcept.IRI);
+    }
+    @Override protected String parameterizeSparql(String sparql) {
+        return bindLiteral(sparql, "_route", ARTICLES_ROUTE);
     }
 }

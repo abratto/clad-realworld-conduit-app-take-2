@@ -20,10 +20,10 @@ public final class WhenSessionLookupFoundThenArticleCreateForManageArticles exte
     @Override public String syncName() { return "whenSessionLookupFoundThenArticleCreateForManageArticles"; }
     @Override public SyncTrigger trigger() { return new SyncTrigger(SessionConcept.IRI, "lookup", null); }
     @Override protected String whereClause() {
-        return "?_when_1 :concept <%s> ; :name \"lookup\" ; :flow ?_flow ; :userId ?_userId .\n<< ?_when_1 :outcome \"FOUND\" >> :flow ?_flow .\n?_req :concept <%s> ; :name \"request\" ; :flow ?_flow ; :input ?_inp .\n?_inp :route ?_route ; :title ?_title .".formatted(SessionConcept.IRI, WEB_IRI);
+        return "?_when_1 :concept <%s> ; :name \"lookup\" ; :flow ?_flow ; :userId ?_userId .\n<< ?_when_1 :outcome \"FOUND\" >> :flow ?_flow .\n?_req :concept <%s> ; :name \"request\" ; :flow ?_flow ; :input ?_inp .\n?_inp :route ?_route ; :title ?_title ; :slugSeed ?_slug .\nFILTER NOT EXISTS { ?_any_create :name \"create\" ; :flow ?_flow }".formatted(SessionConcept.IRI, WEB_IRI);
     }
     @Override protected String thenBindings() {
-        return "?_then_1 :concept <%s> ; :name \"create\" ; :input [ :title ?_title ] .".formatted(ARTICLE_IRI);
+        return "?_then_1 :concept <%s> ; :name \"create\" ; :input [ :title ?_title ; :authorId ?_userId ; :slugSeed ?_slug ] .".formatted(ARTICLE_IRI);
     }
     @Override protected String parameterizeSparql(String sparql) {
         return bindLiteral(sparql, "_route", ARTICLE_ROUTE);

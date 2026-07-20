@@ -229,36 +229,54 @@ public class SyncDispatcher {
     }
 
     private ResponseData checkForResponse(String flowToken) {
+        // Find all respond actions; prefer error status codes (4xx/5xx) over success (2xx)
         String sparql = "PREFIX : <" + SCHEMA + ">\n" +
-                "SELECT ?pred ?value\n" +
+                "SELECT ?action ?pred ?value\n" +
                 "WHERE {\n" +
                 "  GRAPH <" + RdfVocabulary.ACTION_GRAPH_IRI + "> {\n" +
-                "    ?_action :concept <" + FlowManager.WEB_CONCEPT_IRI + "> ;\n" +
+                "    ?action :concept <" + FlowManager.WEB_CONCEPT_IRI + "> ;\n" +
                 "             :name \"respond\" ;\n" +
                 "             :input ?_input ;\n" +
                 "             :flow <" + flowToken + "> .\n" +
                 "    ?_input ?pred ?value .\n" +
                 "    FILTER (STRSTARTS(STR(?pred), \"" + SCHEMA + "\"))\n" +
                 "  }\n" +
-                "}\n";
+                "}\n" +
+                "ORDER BY ?action";
 
         List<Map<String, String>> rows = actionLog.select(sparql);
         if (rows.isEmpty()) return null;
 
         String schemaStatusCode = SCHEMA + STATUS_CODE;
-        Map<String, String> fields = new LinkedHashMap<>();
-        int statusCode = 200;
+        // Group by action IRI; prefer non-2xx status
+        Map<String, Map<String, String>> actionFields = new LinkedHashMap<>();
+        Map<String, Integer> actionStatus = new LinkedHashMap<>();
         for (var row : rows) {
+            String actionIri = row.get("action");
             String predUri = row.get("pred");
             String value = row.get("value");
             if (value == null) continue;
+            actionFields.computeIfAbsent(actionIri, k -> new LinkedHashMap<>());
             if (schemaStatusCode.equals(predUri)) {
-                statusCode = Integer.parseInt(value);
+                actionStatus.put(actionIri, Integer.parseInt(value));
             } else {
-                fields.put(predUri.substring(SCHEMA.length()), value);
+                actionFields.get(actionIri).put(predUri.substring(SCHEMA.length()), value);
             }
         }
-        return new ResponseData(fields, statusCode);
+        // Pick the action with the highest status code (error over success)
+        int chosenStatus = 200;
+        for (var entry : actionStatus.entrySet()) {
+            int s = entry.getValue();
+            if (s >= chosenStatus) {
+                chosenStatus = s;
+            }
+        }
+        // Merge ALL fields from ALL respond actions to preserve data
+        Map<String, String> fields = new LinkedHashMap<>();
+        for (var af : actionFields.entrySet()) {
+            fields.putAll(af.getValue());
+        }
+        return new ResponseData(fields, chosenStatus);
     }
 
     private record ResponseData(Map<String, String> fields, int statusCode) {}

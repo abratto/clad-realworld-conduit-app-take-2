@@ -51,7 +51,7 @@ public final class WhenUserRegisterBlankFieldsThenWebRespondForRegister extends 
             ?_then_1 :concept <%s> ;
                      :name    "respond" ;
                      :input   [ :statusCode 422 ;
-                                :message "can't be blank" ] .
+                                :message ?_reason ] .
             """.formatted(WEB_IRI);
     }
 }

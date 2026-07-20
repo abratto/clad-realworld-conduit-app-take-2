@@ -62,18 +62,22 @@ public class FlowManager {
     public ActionRecord rootAction(String route, Map<String, String> requestParams) {
         String flowToken = mintFlowToken();
         LOG.debug("[flow] {} → {}", route, flowToken);
-        String actionIri = RdfVocabulary.ACTION_NODE_PREFIX + UUID.randomUUID();
-        String inputIri = actionIri + "/input";
+        String requestIri = RdfVocabulary.ACTION_NODE_PREFIX + UUID.randomUUID();
+        String inputIri = requestIri + "/input";
+        String handleIri = RdfVocabulary.ACTION_NODE_PREFIX + UUID.randomUUID();
+        String handleInputIri = handleIri + "/input";
 
         StringBuilder sparql = new StringBuilder();
         sparql.append("PREFIX : <").append(SCHEMA).append(">\n");
         sparql.append("INSERT DATA {\n");
         sparql.append("  GRAPH <").append(RdfVocabulary.ACTION_GRAPH_IRI).append("> {\n");
-        sparql.append("    <").append(actionIri).append("> :concept <").append(WEB_CONCEPT_IRI).append(SUFFIX_SEMI);
+
+        // Web/request
+        sparql.append("    <").append(requestIri).append("> :concept <").append(WEB_CONCEPT_IRI).append(SUFFIX_SEMI);
         sparql.append("         :name \"request\" ;\n");
         sparql.append("         :input <").append(inputIri).append(SUFFIX_SEMI);
         sparql.append("         :flow <").append(flowToken).append("> .\n");
-        sparql.append("    <").append(actionIri).append("> :outcome \"received\" .\n");
+        sparql.append("    <").append(requestIri).append("> :outcome \"received\" .\n");
         sparql.append(INDENT_IRI).append(inputIri).append("> :route ")
               .append(NodeFmtLib.str(NodeFactory.createLiteralString(route), (PrefixMap) null)).append(" .\n");
         for (Map.Entry<String, String> entry : requestParams.entrySet()) {
@@ -81,6 +85,21 @@ public class FlowManager {
                   .append(entry.getKey()).append(" ")
                   .append(NodeFmtLib.str(NodeFactory.createLiteralString(entry.getValue()), (PrefixMap) null)).append(" .\n");
         }
+
+        // Web/handle (needed by sync trigger indexing)
+        sparql.append("    <").append(handleIri).append("> :concept <").append(WEB_CONCEPT_IRI).append(SUFFIX_SEMI);
+        sparql.append("         :name \"handle\" ;\n");
+        sparql.append("         :input <").append(handleInputIri).append(SUFFIX_SEMI);
+        sparql.append("         :flow <").append(flowToken).append("> .\n");
+        sparql.append("    <").append(handleIri).append("> :outcome \"Routed\" .\n");
+        sparql.append(INDENT_IRI).append(handleInputIri).append("> :route ")
+              .append(NodeFmtLib.str(NodeFactory.createLiteralString(route), (PrefixMap) null)).append(" .\n");
+        for (Map.Entry<String, String> entry : requestParams.entrySet()) {
+            sparql.append(INDENT_IRI).append(handleInputIri).append("> :")
+                  .append(entry.getKey()).append(" ")
+                  .append(NodeFmtLib.str(NodeFactory.createLiteralString(entry.getValue()), (PrefixMap) null)).append(" .\n");
+        }
+        sparql.append("    << <").append(handleIri).append("> :outcome \"Routed\" >> :flow <").append(flowToken).append("> .\n");
         sparql.append("  }\n");
         sparql.append("}\n");
 
@@ -94,7 +113,7 @@ public class FlowManager {
         }
 
         return new ActionRecord(
-                actionIri,
+                requestIri,
                 flowToken,
                 WEB_CONCEPT_IRI,
                 "request",

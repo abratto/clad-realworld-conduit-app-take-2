@@ -38,6 +38,7 @@ public final class ArticleConcept extends ConceptAgent {
         pollAndProcess("delete");
         pollAndProcess("authorCheck");
         pollAndProcess("list");
+        pollAndProcess("listByAuthors");
     }
 
     @Override
@@ -49,6 +50,7 @@ public final class ArticleConcept extends ConceptAgent {
             case "delete" -> doDelete(invocation);
             case "authorCheck" -> doAuthorCheck(invocation);
             case "list" -> doList(invocation);
+            case "listByAuthors" -> doListByAuthors(invocation);
             default -> writeError(invocation, "unknown action: " + invocation.actionName());
         }
     }
@@ -78,16 +80,21 @@ public final class ArticleConcept extends ConceptAgent {
         if (title == null || title.isBlank()) {
             writeRefusal(invocation, "blank title"); return;
         }
-        String slug = slugify(title);
+        // Dedup is handled at sync level via LIMIT 1 + FILTER NOT EXISTS
+        String seed = invocation.binding("slugSeed");
+        String slug = (seed != null && !seed.isEmpty()) ? seed : slugify(title);
         String articleId = UUID.randomUUID().toString();
+        String authorId = invocation.binding("authorId");
+        if (authorId == null) authorId = "";
         String ts = Instant.now().toString();
         var pss = new ParameterizedSparqlString();
         pss.setNsPrefix("a", NS);
-        pss.setCommandText("INSERT DATA { GRAPH ?g { ?art a:slug ?slug ; a:title ?title ; a:createdAt ?ts ; a:updatedAt ?ts } }");
+        pss.setCommandText("INSERT DATA { GRAPH ?g { ?art a:slug ?slug ; a:title ?title ; a:authorId ?authorId ; a:createdAt ?ts ; a:updatedAt ?ts } }");
         pss.setIri("g", GRAPH);
         pss.setIri("art", NS + articleId);
         pss.setLiteral("slug", slug);
         pss.setLiteral("title", title);
+        pss.setLiteral("authorId", authorId);
         pss.setLiteral("ts", ts);
         actionLog.update(pss.toString());
         writeCompletion(invocation, Map.of(
@@ -135,8 +142,16 @@ public final class ArticleConcept extends ConceptAgent {
         if (articleId == null || memberId == null) {
             writeError(invocation, "missing articleId or memberId"); return;
         }
+        // Check if memberId matches the stored authorId for this article
+        String iri = NS + articleId;
+        var pss = new ParameterizedSparqlString();
+        pss.setNsPrefix("a", NS);
+        pss.setCommandText("SELECT ?authorId WHERE { GRAPH ?g { <" + iri + "> a:authorId ?authorId } } LIMIT 1");
+        pss.setIri("g", GRAPH);
+        List<Map<String, String>> rows = actionLog.select(pss.toString());
+        boolean isAuthor = rows.isEmpty() || memberId.equals(rows.get(0).get("authorId"));
         writeCompletion(invocation, Map.of(
-                "outcome", ResourceFactory.createStringLiteral("IsAuthor"),
+                "outcome", ResourceFactory.createStringLiteral(isAuthor ? "IsAuthor" : "NotAuthor"),
                 "articleId", ResourceFactory.createStringLiteral(articleId),
                 "memberId", ResourceFactory.createStringLiteral(memberId)));
     }
@@ -151,6 +166,43 @@ public final class ArticleConcept extends ConceptAgent {
         if (rows.isEmpty()) return null;
         String iri = rows.get(0).get("art");
         return iri == null ? null : iri.substring(NS.length());
+    }
+
+    private void doListByAuthors(ActionRecord invocation) {
+        String authorIds = invocation.binding("authorIds");
+        String limitStr = invocation.binding("limit");
+        String offsetStr = invocation.binding("offset");
+        if (authorIds == null || authorIds.isBlank()) {
+            writeCompletion(invocation, Map.of(
+                    "outcome", ResourceFactory.createStringLiteral("Listed"),
+                    "count", ResourceFactory.createStringLiteral("0")));
+            return;
+        }
+        int limit = 20;
+        int offset = 0;
+        if (limitStr != null) try { limit = Integer.parseInt(limitStr); } catch (Exception e) {}
+        if (offsetStr != null) try { offset = Integer.parseInt(offsetStr); } catch (Exception e) {}
+        String[] ids = authorIds.split(",");
+        var pss = new ParameterizedSparqlString();
+        pss.setNsPrefix("a", NS);
+        StringBuilder filter = new StringBuilder();
+        filter.append("FILTER(?authorId IN (");
+        for (int i = 0; i < ids.length; i++) {
+            if (i > 0) filter.append(", ");
+            String var = "?aid" + i;
+            filter.append(var);
+        }
+        filter.append("))");
+        String sparql = "SELECT ?art ?slug ?title ?authorId WHERE { GRAPH ?g { ?art a:slug ?slug ; a:title ?title ; a:authorId ?authorId } " + filter + " } ORDER BY DESC(?art) LIMIT " + limit + " OFFSET " + offset;
+        pss.setCommandText(sparql);
+        pss.setIri("g", GRAPH);
+        for (int i = 0; i < ids.length; i++) {
+            pss.setLiteral("aid" + i, ids[i].trim());
+        }
+        List<Map<String, String>> rows = actionLog.select(pss.toString());
+        writeCompletion(invocation, Map.of(
+                "outcome", ResourceFactory.createStringLiteral("Listed"),
+                "count", ResourceFactory.createStringLiteral(String.valueOf(rows.size()))));
     }
 
     private static String slugify(String title) {

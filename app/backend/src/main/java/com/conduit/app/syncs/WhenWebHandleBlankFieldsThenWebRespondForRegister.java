@@ -11,7 +11,7 @@ import jakarta.inject.Singleton;
 @SyncMetadata(
         flow = "Register",
         step = 2,
-        triggeredBy = "Web/request[route=/api/users, refused]",
+        triggeredBy = "Web/handle[Refused]",
         fires = "Web/respond[422]")
 @Singleton
 public final class WhenWebHandleBlankFieldsThenWebRespondForRegister extends SyncAgent {
@@ -28,19 +28,22 @@ public final class WhenWebHandleBlankFieldsThenWebRespondForRegister extends Syn
 
     @Override
     public SyncTrigger trigger() {
-        return new SyncTrigger(WEB_IRI, "request", null);
+        return new SyncTrigger(WEB_IRI, "handle", null);
     }
 
     @Override
     protected String whereClause() {
         return """
             ?_when_1 :concept <%s> ;
-                     :name    "request" ;
-                     :input   ?_inp ;
+                     :name    "handle" ;
                      :flow    ?_flow .
-            ?_inp :route ?_route .
             << ?_when_1 :outcome "refused" >> :flow ?_flow .
-            """.formatted(WEB_IRI);
+            ?_req :concept <%s> ;
+                  :name    "request" ;
+                  :flow    ?_flow ;
+                  :input   ?_req_inp .
+            ?_req_inp :route ?_route .
+            """.formatted(WEB_IRI, WEB_IRI);
     }
 
     @Override

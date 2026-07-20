@@ -45,8 +45,24 @@ public class RegisterController {
                     result = io.micronaut.http.HttpResponse.status(resp.getStatus())
                             .body(responseAssembler.assemble(flowName, fields));
                 } else {
+                    String msg = fields.getOrDefault("message", "error");
+                    String field;
+                    if (msg.contains("already been taken")) {
+                        field = msg.contains("email") ? "email" : "username";
+                        msg = "has already been taken";
+                    } else if (msg.contains("blank username")) {
+                        field = "username"; msg = "can't be blank";
+                    } else if (msg.contains("blank email")) {
+                        field = "email"; msg = "can't be blank";
+                    } else if (msg.contains("blank password")) {
+                        field = "password"; msg = "can't be blank";
+                    } else if (msg.contains("blank")) {
+                        field = "username"; msg = "can't be blank";
+                    } else {
+                        field = "body";
+                    }
                     result = io.micronaut.http.HttpResponse.status(resp.getStatus())
-                            .body(fields);
+                            .body(java.util.Map.of("errors", java.util.Map.of(field, java.util.List.of(msg))));
                 }
                 String flowToken = resp.getHeaders().get("X-Flow-Token");
                 if (flowToken != null) result.header("X-Flow-Token", flowToken);

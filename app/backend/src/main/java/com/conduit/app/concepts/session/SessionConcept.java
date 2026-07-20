@@ -81,26 +81,27 @@ public final class SessionConcept extends ConceptAgent {
     }
 
     private void doLookup(ActionRecord invocation) {
-        String sessionToken = invocation.binding("sessionToken");
-        if (sessionToken == null) {
-            writeError(invocation, "missing sessionToken");
+        String token = invocation.binding("token");
+        if (token == null || token.isEmpty()) {
+            writeRefusal(invocation, "no token");
             return;
         }
         var pss = new ParameterizedSparqlString();
         pss.setNsPrefix("s", NS);
         pss.setCommandText("SELECT ?userId WHERE { GRAPH ?g { ?session s:userId ?userId } } LIMIT 1");
         pss.setIri("g", GRAPH);
-        pss.setIri("session", NS + "session/" + sessionToken);
+        pss.setIri("session", NS + "session/" + token);
         List<Map<String, String>> rows = actionLog.select(pss.toString());
         if (rows.isEmpty()) {
             writeCompletion(invocation, Map.of(
                     "outcome", ResourceFactory.createStringLiteral("UNKNOWN"),
-                    "sessionToken", ResourceFactory.createStringLiteral(sessionToken)));
+                    "token", ResourceFactory.createStringLiteral(token)));
         } else {
+            String userId = rows.get(0).get("userId");
             writeCompletion(invocation, Map.of(
-                    "outcome", ResourceFactory.createStringLiteral("ACTIVE"),
-                    "sessionToken", ResourceFactory.createStringLiteral(sessionToken),
-                    "userId", ResourceFactory.createStringLiteral(rows.get(0).get("userId"))));
+                    "outcome", ResourceFactory.createStringLiteral("FOUND"),
+                    "token", ResourceFactory.createStringLiteral(token),
+                    "userId", userId != null ? ResourceFactory.createStringLiteral(userId) : ResourceFactory.createStringLiteral("")));
         }
     }
 }
